@@ -1,3 +1,4 @@
+import os
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.types import (
     Message,
@@ -14,8 +15,8 @@ import asyncio
 import sqlite3
 
 # ================== SOZLAMALAR ==================
-TOKEN = "8362973803:AAH9JwMEaBU77OIOoEmbjWC9OvqhsWiv4K4"
-ADMIN_ID = -1003519008259  # admin kanal ID
+TOKEN = os.getenv("TOKEN")
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -199,3 +200,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
