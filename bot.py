@@ -16,7 +16,7 @@ import sqlite3
 
 # ================== SOZLAMALAR ==================
 TOKEN = os.getenv("TOKEN")
-ADMIN_ID = int(os.getenv("-1003519008259"))
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -200,5 +200,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
