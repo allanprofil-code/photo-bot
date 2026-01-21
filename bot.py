@@ -193,13 +193,30 @@ async def change_status(callback: types.CallbackQuery):
     await bot.send_message(user_id, status_map[new_status])
     await callback.answer("Mijozga yuborildi ✅")
 
+from aiohttp import web
+import asyncio
 
+async def healthcheck(request):
+    return web.Response(text="OK")
+
+async def start_web():
+    app = web.Application()
+    app.router.add_get("/", healthcheck)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 10000)
+    await site.start()
+
+async def main():
+    await start_web()
+    await dp.start_polling(bot)
 # ================== START ==================
 async def main():
+    await start_web()
     await dp.start_polling(bot)
-
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
