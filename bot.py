@@ -194,6 +194,7 @@ async def change_status(callback: types.CallbackQuery):
     await callback.answer("Mijozga yuborildi ✅")
 
 from aiohttp import web
+import os
 import asyncio
 
 async def healthcheck(request):
@@ -204,18 +205,21 @@ async def start_web():
     app.router.add_get("/", healthcheck)
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", 10000)
+    site = web.TCPSite(
+        runner,
+        "0.0.0.0",
+        int(os.getenv("PORT", 10000))
+    )
     await site.start()
-
-async def main():
-    await start_web()
-    await dp.start_polling(bot)
 # ================== START ==================
 async def main():
-    await start_web()
-    await dp.start_polling(bot)
+    await asyncio.gather(
+        start_web(),
+        dp.start_polling(bot)
+    )
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
