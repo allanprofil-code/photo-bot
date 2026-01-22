@@ -41,6 +41,37 @@ try:
     conn.commit()
 except:
     pass
+    TEXTS = {
+    "start": {
+        "qq": "📸 Foto xızmetleri botına xosh kelipsiz!",
+        "uz": "📸 Foto xizmatlar botiga xush kelibsiz!",
+        "ru": "📸 Добро пожаловать в фото-сервис бот!",
+        "en": "📸 Welcome to the photo services bot!",
+        "kk": "📸 Фото қызметтері ботына қош келдіңіз!"
+    },
+    "choose_lang": {
+        "qq": "🌐 Tildi tańlań",
+        "uz": "🌐 Tilni tanlang",
+        "ru": "🌐 Выберите язык",
+        "en": "🌐 Choose language",
+        "kk": "🌐 Тілді таңдаңыз"
+    }
+}
+    def get_lang(user_id):
+    cursor.execute(
+        "SELECT language FROM users WHERE user_id=?",
+        (user_id,)
+    )
+    row = cursor.fetchone()
+    return row[0] if row else "uz"
+
+
+def set_lang(user_id, lang):
+    cursor.execute(
+        "INSERT OR REPLACE INTO users (user_id, language) VALUES (?, ?)",
+        (user_id, lang)
+    )
+    conn.commit()
 # ================== NARXLAR ==================
 PRICES = {
     "📷 Foto restavratsiya": "50 000 so‘m",
@@ -137,7 +168,19 @@ async def get_phone(message: Message, state: FSMContext):
         )
     )
     conn.commit()
-
+lang_kb = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(text="QQ", callback_data="lang_qq"),
+        InlineKeyboardButton(text="UZ", callback_data="lang_uz")
+    ],
+    [
+        InlineKeyboardButton(text="RU", callback_data="lang_ru"),
+        InlineKeyboardButton(text="EN", callback_data="lang_en")
+    ],
+    [
+        InlineKeyboardButton(text="KK", callback_data="lang_kk")
+    ]
+])
     order_id = cursor.lastrowid   # 🔥 MANA SHU QATOR MUHIM
 
     await bot.send_photo(
@@ -212,13 +255,24 @@ async def start_web():
     )
     await site.start()
 # ================== START ==================
-async def main():
-    await asyncio.gather(
-        start_web(),
-        dp.start_polling(bot)
+@dp.message(CommandStart())
+async def start(message: Message):
+    await message.answer(
+        TEXTS["choose_lang"]["uz"],
+        reply_markup=lang_kb
     )
-if __name__ == "__main__":
-    asyncio.run(main())
+from aiogram.types import CallbackQuery
+
+@dp.callback_query(lambda c: c.data.startswith("lang_"))
+async def change_lang(call: CallbackQuery):
+    lang = call.data.split("_")[1]
+    set_lang(call.from_user.id, lang)
+
+    await call.message.answer(
+        TEXTS["start"][lang]
+    )
+    await call.answer()
+
 
 
 
