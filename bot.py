@@ -310,7 +310,7 @@ async def get_phone(message: Message, state: FSMContext):
         caption=(
             f"🆕 BUYURTMA #{order_id}\n\n"
             f"📌 Xizmat: {SERVICES[data['service']][lang]}\n"
-            f"💰 Narx: {PRICES[data['service']]}\n"
+            f"💰 Bahası: {PRICES[data['service']]}\n"
             f"📝 Izoh: {data['comment']}\n"
             f"📞 Telefon: {message.contact.phone_number}\n"
             f"📊 Holat: {TEXTS['status_user']['accepted'][lang]}"
@@ -362,4 +362,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
