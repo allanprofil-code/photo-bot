@@ -19,7 +19,7 @@ from aiogram.fsm.context import FSMContext
 # ================== SOZLAMALAR ==================
 # Agar .env fayl bo'lmasa, tokenlarni shu yerga qo'lda yozib test qilishingiz mumkin
 TOKEN = os.getenv("TOKEN") 
-ADMIN_ID = os.getenv("ADMIN_ID")
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 if not TOKEN or not ADMIN_ID:
     print("Xatolik: TOKEN yoki ADMIN_ID topilmadi!")
@@ -216,7 +216,7 @@ async def get_phone(message: Message, state: FSMContext):
     # Adminga yuborish
     try:
         await bot.send_photo(
-            chat_id=int(ADMIN_ID),
+            chat_id=ADMIN_ID,
             photo=data["photo"],
             caption=(
                 f"🆕 BUYURTMA #{order_id}\n\n"
@@ -308,4 +308,5 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Bot to'xtatildi")
+
 
