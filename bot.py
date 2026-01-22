@@ -76,14 +76,14 @@ TEXTS = {
         "kk": "📸 Қызметті таңдаңыз:"
     },
     "photo_request": {
-        "qq": "📷 Suratni jiberiñ:",
+        "qq": "📷 Súwretti jiberiñ:",
         "uz": "📷 Rasmni yuboring:",
         "ru": "📷 Отправьте фото:",
         "en": "📷 Send the photo:",
         "kk": "📷 Суретті жіберіңіз:"
     },
     "confirm": {
-        "qq": "Davom etemizbe?",
+        "qq": "Dawam etemizbe?",
         "uz": "Davom etamizmi?",
         "ru": "Продолжаем?",
         "en": "Shall we continue?",
@@ -97,7 +97,7 @@ TEXTS = {
         "kk": "❌ Болдырмау"
     },
     "continue": {
-        "qq": "✅ Davom etemiz",
+        "qq": "✅ Dawam etemiz",
         "uz": "✅ Davom etamiz",
         "ru": "✅ Продолжить",
         "en": "✅ Continue",
@@ -105,21 +105,21 @@ TEXTS = {
     },
     "status_user": {
         "accepted": {
-            "qq": "⏳ Buyurtmañız qabıl etildi",
+            "qq": "⏳ Buyırtpañız qabıl etildi",
             "uz": "⏳ Buyurtmangiz qabul qilindi",
             "ru": "⏳ Ваш заказ принят",
             "en": "⏳ Your order has been accepted",
             "kk": "⏳ Тапсырысыңыз қабылданды"
         },
         "working": {
-            "qq": "⚙️ Buyurtmañız islewde",
+            "qq": "⚙️ Buyırtpañız islenbekte",
             "uz": "⚙️ Buyurtmangiz ishlanmoqda",
             "ru": "⚙️ Ваш заказ в работе",
             "en": "⚙️ Your order is in progress",
             "kk": "⚙️ Тапсырысыңыз орындалуда"
         },
         "done": {
-            "qq": "✅ Buyurtmañız tayyar!",
+            "qq": "✅ Buyırtpañız tayın!",
             "uz": "✅ Buyurtmangiz tayyor!",
             "ru": "✅ Ваш заказ готов!",
             "en": "✅ Your order is ready!",
@@ -143,7 +143,7 @@ def set_lang(user_id, lang):
 # ================== XIZMATLAR ==================
 SERVICES = {
     "restore": {
-        "qq": "📷 Foto restavratsiya",
+        "qq": "📷 Foto restavraciya",
         "uz": "📷 Foto restavratsiya",
         "ru": "📷 Реставрация фото",
         "en": "📷 Photo restoration",
@@ -362,3 +362,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
