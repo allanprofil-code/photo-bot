@@ -1,10 +1,9 @@
-# Bot kodi: Faqat bitta nusxa ishlashi kerak
 import os
-import asyncio
 import sqlite3
 from aiohttp import web
+import asyncio
 
-from aiogram import Bot, Dispatcher, F, types
+from aiogram import Bot, Dispatcher, types
 from aiogram.types import (
     Message, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove,
     InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -16,6 +15,7 @@ from aiogram.fsm.context import FSMContext
 # ================== SOZLAMALAR ==================
 TOKEN = os.getenv("TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
+PORT = int(os.getenv("PORT", 8080))
 
 if not TOKEN or not ADMIN_ID:
     print("❌ TOKEN yoki ADMIN_ID topilmadi")
@@ -194,24 +194,29 @@ async def change_status(call: CallbackQuery):
     await call.message.edit_caption(call.message.caption.split("📊 Holat:")[0]+f"📊 Holat: {TEXTS['status_user'][new_status][lang]}")
     await call.answer("Yuborildi ✅")
 
-# ================== WEB ==================
+# ================== WEBHOOK + HEALTHCHECK ==================
+async def handle_update(request: web.Request):
+    update = types.Update(**await request.json())
+    await dp.process_update(update)
+    return web.Response(text="OK")
+
 async def healthcheck(request):
     return web.Response(text="OK")
 
 async def start_web():
     app = web.Application()
+    app.router.add_post(f"/webhook/{TOKEN}", handle_update)
     app.router.add_get("/", healthcheck)
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", int(os.getenv("PORT", 8080)))
+    site = web.TCPSite(runner, "0.0.0.0", PORT)
     await site.start()
+    print(f"Server running on port {PORT}")
 
 # ================== MAIN ==================
 async def main():
-    await asyncio.gather(
-        start_web(),
-        dp.start_polling(bot)
-    )
+    await start_web()
+    print("Bot is ready. Please set webhook to: https://<YOUR_DOMAIN>/webhook/{TOKEN}")
 
 if __name__ == "__main__":
     asyncio.run(main())
