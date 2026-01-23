@@ -293,4 +293,7 @@ app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
-    web.run_app(app, host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    print("SERVER STARTED ON PORT:", port)
+    web.run_app(app, host="0.0.0.0", port=port)
+
