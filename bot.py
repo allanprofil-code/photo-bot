@@ -1,7 +1,6 @@
 import os
 import sqlite3
 from aiohttp import web
-
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import (
     Message, CallbackQuery,
@@ -15,9 +14,9 @@ from aiogram.fsm.context import FSMContext
 
 # ================= ENV =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
+ADMIN_ID = os.getenv("ADMIN_ID") # Int ga aylantirishni pastda qilamiz, xato bermasligi uchun
 
-BASE_URL = os.getenv("BASE_URL")  # masalan: https://photo-bot-rm8n.onrender.com
+BASE_URL = os.getenv("BASE_URL")  # https://photo-bot-rm8n.onrender.com
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
 WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
 
@@ -52,106 +51,44 @@ db.commit()
 # ================= LANG =================
 TEXTS = {
     "choose_lang": {
-        "uz": "🌐 Tilni tanlang",
-        "ru": "🌐 Выберите язык",
-        "en": "🌐 Choose language",
-        "qq": "🌐 Tildi tańlań",
-        "kk": "🌐 Тілді таңдаңыз"
+        "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
     "menu": {
-        "uz": "📸 Xizmatni tanlang:",
-        "ru": "📸 Выберите услугу:",
-        "en": "📸 Select service:",
-        "qq": "📸 Xızmetti tańlań:",
-        "kk": "📸 Қызметті таңдаңыз:"
+        "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
     },
     "confirm": {
-        "uz": "Davom etamizmi?",
-        "ru": "Продолжаем?",
-        "en": "Shall we continue?",
-        "qq": "Davom etemizbe?",
-        "kk": "Жалғастырамыз ба?"
+        "uz": "Davom etamizmi?", "ru": "Продолжаем?", "en": "Shall we continue?", "qq": "Davom etemizbe?", "kk": "Жалғастырамыз ба?"
     },
     "cancel": {
-        "uz": "❌ Bekor qilish",
-        "ru": "❌ Отмена",
-        "en": "❌ Cancel",
-        "qq": "❌ Biykarlaw",
-        "kk": "❌ Болдырмау"
+        "uz": "❌ Bekor qilish", "ru": "❌ Отмена", "en": "❌ Cancel", "qq": "❌ Biykarlaw", "kk": "❌ Болдырмау"
     },
     "continue": {
-        "uz": "✅ Davom etamiz",
-        "ru": "✅ Продолжить",
-        "en": "✅ Continue",
-        "qq": "✅ Davom etemiz",
-        "kk": "✅ Жалғастыру"
+        "uz": "✅ Davom etamiz", "ru": "✅ Продолжить", "en": "✅ Continue", "qq": "✅ Davom etemiz", "kk": "✅ Жалғастыру"
     },
     "send_photo": {
-        "uz": "📷 Rasm yoki fayl yuboring",
-        "ru": "📷 Отправьте фото или файл",
-        "en": "📷 Send photo or file",
-        "qq": "📷 Foto yaki fayl jiberiń",
-        "kk": "📷 Фото немесе файл жіберіңіз"
+        "uz": "📷 Rasm yoki fayl yuboring", "ru": "📷 Отправьте фото или файл", "en": "📷 Send photo or file", "qq": "📷 Foto yaki fayl jiberiń", "kk": "📷 Фото немесе файл жіберіңіз"
     },
     "send_comment": {
-        "uz": "📝 Izoh yozing",
-        "ru": "📝 Напишите комментарий",
-        "en": "📝 Write a comment",
-        "qq": "📝 Izoh jazıń",
-        "kk": "📝 Пікір жазыңыз"
+        "uz": "📝 Izoh yozing", "ru": "📝 Напишите комментарий", "en": "📝 Write a comment", "qq": "📝 Izoh jazıń", "kk": "📝 Пікір жазыңыз"
     },
     "send_phone": {
-        "uz": "📞 Telefon raqamingizni yuboring",
-        "ru": "📞 Отправьте номер телефона",
-        "en": "📞 Send your phone number",
-        "qq": "📞 Telefon nomerińizdi jiberiń",
-        "kk": "📞 Телефон нөміріңізді жіберіңіз"
+        "uz": "📞 Telefon raqamingizni yuboring", "ru": "📞 Отправьте номер телефона", "en": "📞 Send your phone number", "qq": "📞 Telefon nomerińizdi jiberiń", "kk": "📞 Телефон нөміріңізді жіберіңіз"
     },
     "accepted": {
-        "uz": "⏳ Buyurtma qabul qilindi",
-        "ru": "⏳ Заказ принят",
-        "en": "⏳ Order accepted",
-        "qq": "⏳ Buyırtpa qabıl etildi",
-        "kk": "⏳ Тапсырыс қабылданды"
+        "uz": "⏳ Buyurtma qabul qilindi", "ru": "⏳ Заказ принят", "en": "⏳ Order accepted", "qq": "⏳ Buyırtpa qabıl etildi", "kk": "⏳ Тапсырыс қабылданды"
     },
     "working": {
-        "uz": "⚙️ Buyurtma ishlanmoqda",
-        "ru": "⚙️ Заказ в работе",
-        "en": "⚙️ Order in progress",
-        "qq": "⚙️ Buyırtpa islewde",
-        "kk": "⚙️ Тапсырыс орындалуда"
+        "uz": "⚙️ Buyurtma ishlanmoqda", "ru": "⚙️ Заказ в работе", "en": "⚙️ Order in progress", "qq": "⚙️ Buyırtpa islewde", "kk": "⚙️ Тапсырыс орындалуда"
     },
     "done": {
-        "uz": "✅ Buyurtma tayyor",
-        "ru": "✅ Заказ готов",
-        "en": "✅ Order ready",
-        "qq": "✅ Buyırtpa tayyar",
-        "kk": "✅ Тапсырыс дайын"
+        "uz": "✅ Buyurtma tayyor", "ru": "✅ Заказ готов", "en": "✅ Order ready", "qq": "✅ Buyırtpa tayyar", "kk": "✅ Тапсырыс дайын"
     }
 }
 
 SERVICES = {
-    "restore": {
-        "uz": "📷 Foto restavratsiya",
-        "ru": "📷 Реставрация фото",
-        "en": "📷 Photo restoration",
-        "qq": "📷 Foto restavratsiya",
-        "kk": "📷 Фото реставрация"
-    },
-    "4k": {
-        "uz": "🖼 4K / 8K qilish",
-        "ru": "🖼 4K / 8K",
-        "en": "🖼 4K / 8K",
-        "qq": "🖼 4K / 8K",
-        "kk": "🖼 4K / 8K"
-    },
-    "video": {
-        "uz": "🎞 Video qilish",
-        "ru": "🎞 Видео",
-        "en": "🎞 Video",
-        "qq": "🎞 Video",
-        "kk": "🎞 Видео"
-    }
+    "restore": { "uz": "📷 Foto restavratsiya", "ru": "📷 Реставрация фото", "en": "📷 Photo restoration", "qq": "📷 Foto restavratsiya", "kk": "📷 Фото реставрация" },
+    "4k": { "uz": "🖼 4K / 8K qilish", "ru": "🖼 4K / 8K", "en": "🖼 4K / 8K", "qq": "🖼 4K / 8K", "kk": "🖼 4K / 8K" },
+    "video": { "uz": "🎞 Video qilish", "ru": "🎞 Видео", "en": "🎞 Video", "qq": "🎞 Video", "kk": "🎞 Видео" }
 }
 
 # ================= HELPERS =================
@@ -181,9 +118,9 @@ def confirm_kb(lang):
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏳ Accepted", callback_data=f"s:{order_id}:accepted")],
-        [InlineKeyboardButton(text="⚙️ Working", callback_data=f"s:{order_id}:working")],
-        [InlineKeyboardButton(text="✅ Done", callback_data=f"s:{order_id}:done")]
+        [InlineKeyboardButton(text="⏳ Qabul (Accepted)", callback_data=f"s:{order_id}:accepted")],
+        [InlineKeyboardButton(text="⚙️ Ishlanmoqda (Working)", callback_data=f"s:{order_id}:working")],
+        [InlineKeyboardButton(text="✅ Tayyor (Done)", callback_data=f"s:{order_id}:done")]
     ])
 
 # ================= FSM =================
@@ -232,8 +169,15 @@ async def cont(m: Message, state: FSMContext):
 # ================= FILE =================
 @dp.message(Order.file, F.photo | F.document)
 async def get_file(m: Message, state: FSMContext):
-    file_id = m.photo[-1].file_id if m.photo else m.document.file_id
-    await state.update_data(file_id=file_id)
+    # Fayl turini aniqlaymiz va saqlaymiz
+    if m.photo:
+        file_id = m.photo[-1].file_id
+        file_type = "photo"
+    else:
+        file_id = m.document.file_id
+        file_type = "document"
+
+    await state.update_data(file_id=file_id, file_type=file_type)
     await state.set_state(Order.comment)
     await m.answer(TEXTS["send_comment"][get_lang(m.from_user.id)])
 
@@ -250,35 +194,83 @@ async def get_comment(m: Message, state: FSMContext):
 async def finish(m: Message, state: FSMContext):
     data = await state.get_data()
     lang = get_lang(m.from_user.id)
+    phone = m.contact.phone_number
 
     cur.execute("""
     INSERT INTO orders(user_id, service, comment, phone, status, file_id)
     VALUES(?,?,?,?,?,?)
     """, (m.from_user.id, data["service"], data["comment"],
-          m.contact.phone_number, "accepted", data["file_id"]))
+          phone, "accepted", data["file_id"]))
     db.commit()
     order_id = cur.lastrowid
 
-    await bot.send_message(ADMIN_ID, f"🆕 Order #{order_id}", reply_markup=admin_kb(order_id))
+    # --- ADMIN QISMI O'ZGARTIRILDI ---
+    caption_text = (
+        f"🆕 <b>YANGI BUYURTMA #{order_id}</b>\n\n"
+        f"👤 <b>Mijoz:</b> <a href='tg://user?id={m.from_user.id}'>{m.from_user.full_name}</a>\n"
+        f"🛠 <b>Xizmat:</b> {data['service']}\n"
+        f"📝 <b>Izoh:</b> {data['comment']}\n"
+        f"📞 <b>Tel:</b> {phone}"
+    )
+
+    try:
+        # Fayl turiga qarab adminga yuboramiz
+        if data['file_type'] == "photo":
+            await bot.send_photo(
+                chat_id=ADMIN_ID,
+                photo=data['file_id'],
+                caption=caption_text,
+                parse_mode="HTML",
+                reply_markup=admin_kb(order_id)
+            )
+        else:
+            await bot.send_document(
+                chat_id=ADMIN_ID,
+                document=data['file_id'],
+                caption=caption_text,
+                parse_mode="HTML",
+                reply_markup=admin_kb(order_id)
+            )
+    except Exception as e:
+        # Agar fayl yuborishda xato bo'lsa, xabar beramiz
+        await bot.send_message(ADMIN_ID, f"⚠️ Faylni yuborishda xatolik: {e}\n\n{caption_text}", reply_markup=admin_kb(order_id))
+
     await m.answer(TEXTS["accepted"][lang], reply_markup=menu_kb(lang))
     await state.clear()
 
-# ================= ADMIN =================
+# ================= ADMIN STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
 async def status(c: CallbackQuery):
     _, oid, st = c.data.split(":")
     cur.execute("UPDATE orders SET status=? WHERE id=?", (st, oid))
     db.commit()
     cur.execute("SELECT user_id FROM orders WHERE id=?", (oid,))
-    uid = cur.fetchone()[0]
-    await bot.send_message(uid, TEXTS[st][get_lang(uid)])
-    await c.answer("OK")
+    
+    result = cur.fetchone()
+    if result:
+        uid = result[0]
+        try:
+            await bot.send_message(uid, TEXTS[st][get_lang(uid)])
+        except:
+            pass # Mijoz bloklagan bo'lsa
+            
+    await c.answer("Status o'zgardi!")
 
-# ================= WEBHOOK =================
-async def webhook(request):
-    upd = Update.model_validate(await request.json())
-    await dp.feed_update(bot, upd)
-    return web.Response(text="OK")
+# ================= WEBHOOK & SERVER =================
+async def webhook_handler(request):
+    """Telegramdan kelgan yangiliklarni qabul qiladi"""
+    try:
+        data = await request.json()
+        upd = Update.model_validate(data)
+        await dp.feed_update(bot, upd)
+        return web.Response(text="OK")
+    except Exception as e:
+        return web.Response(text=str(e), status=500)
+
+# --- 404 XATOSINI YO'QOTISH UCHUN ---
+async def home_handler(request):
+    """Saytning bosh sahifasi (ping uchun)"""
+    return web.Response(text="Bot is running! (Webhook is active)")
 
 async def on_startup(app):
     await bot.set_webhook(WEBHOOK_URL)
@@ -287,13 +279,15 @@ async def on_shutdown(app):
     await bot.delete_webhook()
     await bot.session.close()
 
+# Serverni sozlash
 app = web.Application()
-app.router.add_post(WEBHOOK_PATH, webhook)
+app.router.add_post(WEBHOOK_PATH, webhook_handler) # Telegram uchun
+app.router.add_get('/', home_handler)              # Ping va Browser uchun (404 ni tuzatadi)
+
 app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    print("SERVER STARTED ON PORT:", port)
+    print(f"SERVER STARTED ON PORT: {port}")
     web.run_app(app, host="0.0.0.0", port=port)
-
