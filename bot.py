@@ -102,7 +102,7 @@ TEXTS = {
 # Narxlar tiyinda ko'rsatilgan (1 so'm = 100 tiyin)
 SERVICES_CONFIG = {
     "restore": {
-        "price": 5000000, # 50 000 so'm
+        "price": 100000, # 1000 so'm
         "names": {
             "uz": "📷 Foto restavratsiya (50k)",
             "ru": "📷 Реставрация фото (50k)",
@@ -112,7 +112,7 @@ SERVICES_CONFIG = {
         }
     },
     "4k": {
-        "price": 3000000, # 30 000 so'm
+        "price": 3000000, # 1000 so'm
         "names": {
             "uz": "🖼 4K / 8K qilish (30k)",
             "ru": "🖼 4K / 8K (30k)",
@@ -340,3 +340,4 @@ app.on_shutdown.append(on_shutdown)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     web.run_app(app, host="0.0.0.0", port=port)
+
