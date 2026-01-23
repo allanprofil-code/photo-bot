@@ -14,7 +14,7 @@ from aiogram.fsm.context import FSMContext
 
 # ================= ENV =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-PAYMENT_TOKEN = os.getenv("PAYMENT_TOKEN") # YANGI: To'lov tokeni
+PAYMENT_TOKEN = os.getenv("PAYMENT_TOKEN") # BotFatherdan olingan Click/Payme tokeni
 ADMIN_ID = os.getenv("ADMIN_ID")
 
 BASE_URL = os.getenv("BASE_URL")
@@ -50,31 +50,87 @@ CREATE TABLE IF NOT EXISTS orders(
 """)
 db.commit()
 
-# ================= NARXLAR (TIYINDA) =================
-# Telegramda 1 so'm = 100 tiyin.
-# 50 000 so'm bo'lishi uchun 5 000 000 yozish kerak.
-PRICES = {
-    "restore": {"label": "Foto Restavratsiya", "amount": 5000000}, # 50 000 so'm
-    "4k":      {"label": "4K / 8K Sifat",     "amount": 3000000}, # 30 000 so'm
-    "video":   {"label": "Video Montaj",      "amount": 8000000}, # 80 000 so'm
-}
-
-# ================= TEXTS =================
+# ================= TARJIMALAR (5 TILDA) =================
 TEXTS = {
-    "choose_lang": {"uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык"},
-    "menu": {"uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:"},
-    "pay_btn": {"uz": "💸 To'lov qilish", "ru": "💸 Оплатить"},
-    "after_pay": {"uz": "✅ To'lov qabul qilindi!\nEndi rasm yoki faylni yuboring:", "ru": "✅ Оплата принята!\nТеперь отправьте фото или файл:"},
-    "send_comment": {"uz": "📝 Izoh yozing:", "ru": "📝 Напишите комментарий:"},
-    "send_phone": {"uz": "📞 Telefon raqamingizni yuboring:", "ru": "📞 Отправьте номер телефона:"},
-    "accepted": {"uz": "⏳ Buyurtma qabul qilindi!", "ru": "⏳ Заказ принят!"},
-    "cancel": {"uz": "❌ Bekor qilish", "ru": "❌ Отмена"}
+    "choose_lang": {
+        "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
+    },
+    "menu": {
+        "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
+    },
+    "invoice_title": {
+        "uz": "To'lov", "ru": "Оплата", "en": "Payment", "qq": "Tólem", "kk": "Төлем"
+    },
+    "invoice_desc": {
+        "uz": "Xizmat uchun to'lovni amalga oshiring",
+        "ru": "Пожалуйста, оплатите услугу",
+        "en": "Please pay for the service",
+        "qq": "Xızmet ushın tólemdi ámelge asırıń",
+        "kk": "Қызмет үшін төлем жасаңыз"
+    },
+    "pay_btn": {
+        "uz": "💸 To'lov qilish", "ru": "💸 Оплатить", "en": "💸 Pay", "qq": "💸 Tólew", "kk": "💸 Төлеу"
+    },
+    "after_pay": {
+        "uz": "✅ To'lov qabul qilindi!\nEndi rasm yoki faylni yuboring:",
+        "ru": "✅ Оплата принята!\nТеперь отправьте фото или файл:",
+        "en": "✅ Payment accepted!\nNow send the photo or file:",
+        "qq": "✅ Tólem qabıl etildi!\nEndi súwret yaki fayldı jiberiń:",
+        "kk": "✅ Төлем қабылданды!\nЕнді сурет немесе файл жіберіңіз:"
+    },
+    "cancel": {
+        "uz": "❌ Bekor qilish", "ru": "❌ Отмена", "en": "❌ Cancel", "qq": "❌ Biykarlaw", "kk": "❌ Болдырмау"
+    },
+    "send_comment": {
+        "uz": "📝 Izoh yozing:", "ru": "📝 Напишите комментарий:", "en": "📝 Write a comment:", "qq": "📝 Izoh jazıń:", "kk": "📝 Пікір жазыңыз:"
+    },
+    "send_phone": {
+        "uz": "📞 Telefon raqamingizni yuboring:", "ru": "📞 Отправьте номер телефона:", "en": "📞 Send your phone number:", "qq": "📞 Telefon nomerińizdi jiberiń:", "kk": "📞 Телефон нөміріңізді жіберіңіз:"
+    },
+    "accepted": {
+        "uz": "⏳ Buyurtma qabul qilindi!", "ru": "⏳ Заказ принят!", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi!", "kk": "⏳ Тапсырыс қабылданды!"
+    },
+    "working": {
+        "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ In progress", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда"
+    },
+    "done": {
+        "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын"
+    }
 }
 
-SERVICES_NAMES = {
-    "restore": {"uz": "📷 Foto restavratsiya (50k)", "ru": "📷 Реставрация фото (50k)"},
-    "4k":      {"uz": "🖼 4K / 8K qilish (30k)",     "ru": "🖼 4K / 8K (30k)"},
-    "video":   {"uz": "🎞 Video qilish (80k)",        "ru": "🎞 Видео (80k)"}
+# ================= XIZMATLAR VA NARXLAR =================
+# Narxlar tiyinda ko'rsatilgan (1 so'm = 100 tiyin)
+SERVICES_CONFIG = {
+    "restore": {
+        "price": 5000000, # 50 000 so'm
+        "names": {
+            "uz": "📷 Foto restavratsiya (50k)",
+            "ru": "📷 Реставрация фото (50k)",
+            "en": "📷 Photo restoration (50k)",
+            "qq": "📷 Foto restavratsiya (50k)",
+            "kk": "📷 Фото реставрация (50k)"
+        }
+    },
+    "4k": {
+        "price": 3000000, # 30 000 so'm
+        "names": {
+            "uz": "🖼 4K / 8K qilish (30k)",
+            "ru": "🖼 4K / 8K (30k)",
+            "en": "🖼 4K / 8K upscale (30k)",
+            "qq": "🖼 4K / 8K sapası (30k)",
+            "kk": "🖼 4K / 8K жасау (30k)"
+        }
+    },
+    "video": {
+        "price": 8000000, # 80 000 so'm
+        "names": {
+            "uz": "🎞 Video montaj (80k)",
+            "ru": "🎞 Видео монтаж (80k)",
+            "en": "🎞 Video editing (80k)",
+            "qq": "🎞 Video montaj (80k)",
+            "kk": "🎞 Видео монтаж (80k)"
+        }
+    }
 }
 
 # ================= HELPERS =================
@@ -88,11 +144,11 @@ def set_lang(uid, lang):
     db.commit()
 
 def menu_kb(lang):
-    # Faqat 2 ta til qoldirdim soddalik uchun, xohlasangiz qo'shing
-    return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text=SERVICES_NAMES[k][lang])] for k in SERVICES_NAMES],
-        resize_keyboard=True
-    )
+    # Shu tildagi xizmat nomlarini chiqaramiz
+    buttons = []
+    for s_conf in SERVICES_CONFIG.values():
+        buttons.append([KeyboardButton(text=s_conf["names"][lang])])
+    return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -103,7 +159,7 @@ def admin_kb(order_id):
 
 # ================= FSM =================
 class Order(StatesGroup):
-    waiting_payment = State() # To'lov kutilmoqda
+    waiting_payment = State()
     file = State()
     comment = State()
     phone = State()
@@ -113,9 +169,12 @@ class Order(StatesGroup):
 async def start(m: Message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="O'zbekcha 🇺🇿", callback_data="lang_uz"),
-         InlineKeyboardButton(text="Русский 🇷🇺", callback_data="lang_ru")]
+         InlineKeyboardButton(text="Русский 🇷🇺", callback_data="lang_ru")],
+        [InlineKeyboardButton(text="English 🇺🇸", callback_data="lang_en"),
+         InlineKeyboardButton(text="Qaraqalpaqsha 🇿🇦", callback_data="lang_qq")], # Flag taxminiy
+        [InlineKeyboardButton(text="Қазақша 🇰🇿", callback_data="lang_kk")]
     ])
-    await m.answer("Tilni tanlang / Выберите язык:", reply_markup=kb)
+    await m.answer(TEXTS["choose_lang"]["uz"], reply_markup=kb)
 
 @dp.callback_query(F.data.startswith("lang_"))
 async def set_language(c: CallbackQuery):
@@ -124,47 +183,51 @@ async def set_language(c: CallbackQuery):
     await c.message.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
     await c.answer()
 
-# ================= 1. XIZMAT TANLASH VA INVOICE YUBORISH =================
-@dp.message(lambda m: any(m.text in v.values() for v in SERVICES_NAMES.values()))
+# ================= 1. TO'LOV (INVOICE) =================
+@dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def send_invoice_handler(m: Message, state: FSMContext):
     lang = get_lang(m.from_user.id)
     
-    # Qaysi xizmat ekanligini aniqlaymiz
-    service_key = next(k for k, v in SERVICES_NAMES.items() if v[lang] == m.text)
-    price_info = PRICES[service_key]
+    # Qaysi xizmat tanlanganini aniqlaymiz
+    selected_service = None
+    for s_key, s_conf in SERVICES_CONFIG.items():
+        if s_conf["names"][lang] == m.text:
+            selected_service = s_key
+            break
+            
+    if not selected_service:
+        return
 
-    await state.update_data(service=service_key, price=price_info["amount"])
+    price = SERVICES_CONFIG[selected_service]["price"]
+    label = SERVICES_CONFIG[selected_service]["names"][lang] # Invoice chekida chiqadigan nom
+
+    await state.update_data(service=selected_service, price=price)
     
-    # Invoice yuboramiz
+    # Invoice yuboramiz (Hamma narsa tanlangan tilda)
     await bot.send_invoice(
         chat_id=m.chat.id,
-        title=SERVICES_NAMES[service_key][lang],
-        description="Xizmat uchun to'lov",
-        payload=f"pay_{service_key}", # Yashirin ma'lumot
+        title=TEXTS["invoice_title"][lang],
+        description=f"{TEXTS['invoice_desc'][lang]}: {label}",
+        payload=f"pay_{selected_service}",
         provider_token=PAYMENT_TOKEN,
         currency="UZS",
-        prices=[LabeledPrice(label=price_info["label"], amount=price_info["amount"])],
+        prices=[LabeledPrice(label=label, amount=price)],
         start_parameter="pay",
-        photo_url="https://cdn-icons-png.flaticon.com/512/2331/2331966.png", # Rasm (ixtiyoriy)
-        photo_height=512, photo_width=512, photo_size=512
+        payload_kwargs={"is_flexible": False}
     )
     await state.set_state(Order.waiting_payment)
 
-# ================= 2. TO'LOVNI TEKSHIRISH (PRE-CHECKOUT) =================
+# ================= 2. PRE-CHECKOUT =================
 @dp.pre_checkout_query()
 async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery):
-    # Bu yerda to'lovni ruxsat beramiz (agar tovar qolmagan bo'lsa False qaytarish mumkin)
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
-# ================= 3. TO'LOV MUVAFFAQIYATLI O'TDI =================
+# ================= 3. SUCCESSFUL PAYMENT =================
 @dp.message(F.successful_payment)
 async def successful_payment_handler(m: Message, state: FSMContext):
     lang = get_lang(m.from_user.id)
-    
-    # Bazaga yoki logga yozish mumkin: m.successful_payment.total_amount
+    # To'lov muvaffaqiyatli
     await m.answer(TEXTS["after_pay"][lang], reply_markup=ReplyKeyboardRemove())
-    
-    # Endi buyurtma jarayonini davom ettiramiz
     await state.set_state(Order.file)
 
 # ================= 4. FILE, COMMENT, PHONE =================
@@ -195,12 +258,13 @@ async def finish(m: Message, state: FSMContext):
     data = await state.get_data()
     lang = get_lang(m.from_user.id)
     phone = m.contact.phone_number
-    amount_human = data['price'] / 100 # Tiyinni so'mga aylantiramiz
+    amount_human = data['price'] / 100 
+    service_name = SERVICES_CONFIG[data["service"]]["names"][lang]
 
     cur.execute("""
     INSERT INTO orders(user_id, service, amount, comment, phone, status, file_id)
     VALUES(?,?,?,?,?,?,?)
-    """, (m.from_user.id, data["service"], amount_human, data["comment"],
+    """, (m.from_user.id, service_name, amount_human, data["comment"],
           phone, "paid_accepted", data["file_id"]))
     db.commit()
     order_id = cur.lastrowid
@@ -208,11 +272,12 @@ async def finish(m: Message, state: FSMContext):
     # Admin xabari
     caption_text = (
         f"🆕 <b>YANGI BUYURTMA #{order_id}</b>\n"
-        f"✅ <b>TO'LOV QILINGAN:</b> {int(amount_human)} so'm\n\n"
+        f"✅ <b>TO'LOV:</b> {int(amount_human)} so'm\n\n"
         f"👤 <b>Mijoz:</b> <a href='tg://user?id={m.from_user.id}'>{m.from_user.full_name}</a>\n"
-        f"🛠 <b>Xizmat:</b> {data['service']}\n"
+        f"🛠 <b>Xizmat:</b> {service_name}\n"
         f"📝 <b>Izoh:</b> {data['comment']}\n"
-        f"📞 <b>Tel:</b> {phone}"
+        f"📞 <b>Tel:</b> {phone}\n"
+        f"🌐 <b>Til:</b> {lang.upper()}"
     )
 
     try:
@@ -230,11 +295,21 @@ async def finish(m: Message, state: FSMContext):
 @dp.callback_query(F.data.startswith("s:"))
 async def status(c: CallbackQuery):
     _, oid, st = c.data.split(":")
-    # Bazada statusni yangilaymiz
     cur.execute("UPDATE orders SET status=? WHERE id=?", (st, oid))
     db.commit()
+    
+    # Mijozga o'z tilida xabar yuborish
+    cur.execute("SELECT user_id FROM orders WHERE id=?", (oid,))
+    res = cur.fetchone()
+    if res:
+        uid = res[0]
+        try:
+            user_lang = get_lang(uid)
+            await bot.send_message(uid, TEXTS[st][user_lang])
+        except:
+            pass
+            
     await c.answer("Status yangilandi!")
-    # Ixtiyoriy: Mijozga xabar yuborish logikasini shu yerga qo'shish mumkin
 
 # ================= SERVER =================
 async def webhook_handler(request):
@@ -247,7 +322,7 @@ async def webhook_handler(request):
         return web.Response(text="Error", status=500)
 
 async def home_handler(request):
-    return web.Response(text="Bot is running with Payments!")
+    return web.Response(text="Bot is running with 5 Languages & Payments!")
 
 async def on_startup(app):
     await bot.set_webhook(WEBHOOK_URL)
