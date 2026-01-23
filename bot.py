@@ -183,39 +183,52 @@ async def set_language(c: CallbackQuery):
     await c.message.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
     await c.answer()
 
-# ================= 1. TO'LOV (INVOICE) =================
+# ================= 1. TO'LOV (INVOICE) - XAVFSIZ VARIANT =================
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def send_invoice_handler(m: Message, state: FSMContext):
-    lang = get_lang(m.from_user.id)
-    
-    # Qaysi xizmat tanlanganini aniqlaymiz
-    selected_service = None
-    for s_key, s_conf in SERVICES_CONFIG.items():
-        if s_conf["names"][lang] == m.text:
-            selected_service = s_key
-            break
-            
-    if not selected_service:
-        return
+    try:
+        # 1. Eng avvalo Token borligini tekshiramiz
+        if not PAYMENT_TOKEN:
+            await m.answer("⚠️ <b>Xatolik:</b> To'lov tizimi ulanmagan!\nRender sozlamalarida <code>PAYMENT_TOKEN</code> yo'q.", parse_mode="HTML")
+            return
 
-    price = SERVICES_CONFIG[selected_service]["price"]
-    label = SERVICES_CONFIG[selected_service]["names"][lang] # Invoice chekida chiqadigan nom
+        lang = get_lang(m.from_user.id)
+        
+        # 2. Xizmatni aniqlash
+        selected_service = None
+        for s_key, s_conf in SERVICES_CONFIG.items():
+            if s_conf["names"][lang] == m.text:
+                selected_service = s_key
+                break
+                
+        if not selected_service:
+            await m.answer("⚠️ Xatolik: Xizmat bazadan topilmadi.")
+            return
 
-    await state.update_data(service=selected_service, price=price)
-    
-    # Invoice yuboramiz (Hamma narsa tanlangan tilda)
-    await bot.send_invoice(
-        chat_id=m.chat.id,
-        title=TEXTS["invoice_title"][lang],
-        description=f"{TEXTS['invoice_desc'][lang]}: {label}",
-        payload=f"pay_{selected_service}",
-        provider_token=PAYMENT_TOKEN,
-        currency="UZS",
-        prices=[LabeledPrice(label=label, amount=price)],
-        start_parameter="pay",
-        payload_kwargs={"is_flexible": False}
-    )
-    await state.set_state(Order.waiting_payment)
+        price = SERVICES_CONFIG[selected_service]["price"]
+        label = SERVICES_CONFIG[selected_service]["names"][lang]
+
+        await state.update_data(service=selected_service, price=price)
+        
+        # 3. Invoice yuborish
+        await bot.send_invoice(
+            chat_id=m.chat.id,
+            title=TEXTS["invoice_title"][lang],
+            description=f"{TEXTS['invoice_desc'][lang]}: {label}",
+            payload=f"pay_{selected_service}",
+            provider_token=PAYMENT_TOKEN,
+            currency="UZS",
+            prices=[LabeledPrice(label=label, amount=price)],
+            start_parameter="pay",
+            payload_kwargs={"is_flexible": False}
+        )
+        await state.set_state(Order.waiting_payment)
+
+    except Exception as e:
+        # Agar xatolik bo'lsa, bot qotib qolmaydi, xatoni yozib beradi
+        error_text = f"🚫 <b>Xatolik yuz berdi:</b>\n{str(e)}"
+        await m.answer(error_text, parse_mode="HTML")
+        print(f"XATOLIK: {e}") # Bu Render loglarida ko'rinadi
 
 # ================= 2. PRE-CHECKOUT =================
 @dp.pre_checkout_query()
