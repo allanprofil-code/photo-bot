@@ -183,11 +183,11 @@ async def set_language(c: CallbackQuery):
     await c.message.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
     await c.answer()
 
-# ================= 1. TO'LOV (INVOICE) - XAVFSIZ VARIANT =================
+# ================= 1. TO'LOV (INVOICE) - TO'G'IRLANGAN =================
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def send_invoice_handler(m: Message, state: FSMContext):
     try:
-        # 1. Eng avvalo Token borligini tekshiramiz
+        # 1. Token tekshiruvi
         if not PAYMENT_TOKEN:
             await m.answer("⚠️ <b>Xatolik:</b> To'lov tizimi ulanmagan!\nRender sozlamalarida <code>PAYMENT_TOKEN</code> yo'q.", parse_mode="HTML")
             return
@@ -202,7 +202,7 @@ async def send_invoice_handler(m: Message, state: FSMContext):
                 break
                 
         if not selected_service:
-            await m.answer("⚠️ Xatolik: Xizmat bazadan topilmadi.")
+            await m.answer("⚠️ Xatolik: Xizmat topilmadi.")
             return
 
         price = SERVICES_CONFIG[selected_service]["price"]
@@ -210,7 +210,7 @@ async def send_invoice_handler(m: Message, state: FSMContext):
 
         await state.update_data(service=selected_service, price=price)
         
-        # 3. Invoice yuborish
+        # 3. Invoice yuborish (TUZATILDI)
         await bot.send_invoice(
             chat_id=m.chat.id,
             title=TEXTS["invoice_title"][lang],
@@ -220,15 +220,14 @@ async def send_invoice_handler(m: Message, state: FSMContext):
             currency="UZS",
             prices=[LabeledPrice(label=label, amount=price)],
             start_parameter="pay",
-            payload_kwargs={"is_flexible": False}
+            is_flexible=False  # <-- MUHIM: Bu to'g'ridan-to'g'ri yozilishi kerak
         )
         await state.set_state(Order.waiting_payment)
 
     except Exception as e:
-        # Agar xatolik bo'lsa, bot qotib qolmaydi, xatoni yozib beradi
         error_text = f"🚫 <b>Xatolik yuz berdi:</b>\n{str(e)}"
         await m.answer(error_text, parse_mode="HTML")
-        print(f"XATOLIK: {e}") # Bu Render loglarida ko'rinadi
+        print(f"XATOLIK: {e}")
 
 # ================= 2. PRE-CHECKOUT =================
 @dp.pre_checkout_query()
@@ -353,4 +352,5 @@ app.on_shutdown.append(on_shutdown)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     web.run_app(app, host="0.0.0.0", port=port)
+
 
