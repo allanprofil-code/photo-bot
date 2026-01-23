@@ -229,10 +229,19 @@ async def send_invoice_handler(m: Message, state: FSMContext):
         await m.answer(error_text, parse_mode="HTML")
         print(f"XATOLIK: {e}")
 
-# ================= 2. PRE-CHECKOUT =================
+# ================= 2. PRE-CHECKOUT (TO'LOVNI TASDIQLASH) =================
 @dp.pre_checkout_query()
 async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery):
-    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+    try:
+        # Logga yozamiz (Renderda ko'rinadi)
+        print(f"💰 Pre-checkout keldi: {pre_checkout_query.id}")
+        
+        # ⚠️ 10 soniya ichida javob berish SHART
+        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+        
+        print("✅ Pre-checkout tasdiqlandi!")
+    except Exception as e:
+        print(f"❌ Pre-checkout xatosi: {e}")
 
 # ================= 3. SUCCESSFUL PAYMENT =================
 @dp.message(F.successful_payment)
@@ -352,5 +361,6 @@ app.on_shutdown.append(on_shutdown)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     web.run_app(app, host="0.0.0.0", port=port)
+
 
 
