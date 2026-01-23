@@ -1,92 +1,41 @@
 import os
-import sqlite3
-import asyncio
 from aiohttp import web
-
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, F
 from aiogram.types import (
-    Message,
-    ReplyKeyboardMarkup,
-    KeyboardButton,
-    ReplyKeyboardRemove,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    CallbackQuery
+    Message, Update,
+    ReplyKeyboardMarkup, KeyboardButton,
+    ReplyKeyboardRemove
 )
-from aiogram.filters import CommandStart
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 # ================== CONFIG ==================
-TOKEN = os.getenv("TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
-PORT = int(os.getenv("PORT", 8080))
 
-if not TOKEN or not ADMIN_ID:
-    raise RuntimeError("TOKEN yoki ADMIN_ID yo‘q")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+BASE_URL = "https://photo-bot-rm8n.onrender.com"
+ADMIN_IDS = [123456789]  # 🔴 O'ZINGIZNI ADMIN ID QILING
 
-bot = Bot(token=TOKEN)
+WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
+WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
+
+bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
 
-# ================== DATABASE ==================
-conn = sqlite3.connect("orders.db", check_same_thread=False)
-cursor = conn.cursor()
+# ================== STATES ==================
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY,
-    language TEXT
-)
-""")
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    service TEXT,
-    price TEXT,
-    comment TEXT,
-    phone TEXT,
-    status TEXT,
-    user_id INTEGER
-)
-""")
-conn.commit()
-
-# ================== HELPERS ==================
-def get_lang(user_id):
-    cursor.execute("SELECT language FROM users WHERE user_id=?", (user_id,))
-    row = cursor.fetchone()
-    return row[0] if row else "uz"
-
-def set_lang(user_id, lang):
-    cursor.execute(
-        "INSERT OR REPLACE INTO users (user_id, language) VALUES (?, ?)",
-        (user_id, lang)
-    )
-    conn.commit()
+class Order(StatesGroup):
+    waiting_photo = State()
+    comment = State()
 
 # ================== TEXTS ==================
+
 TEXTS = {
-    "start": {
-        "qq": "📸 Foto xızmetleri botına xosh kelipsiz!",
-        "uz": "📸 Foto xizmatlar botiga xush kelibsiz!",
-        "ru": "📸 Добро пожаловать в фото-сервис бот!",
-        "en": "📸 Welcome to the photo services bot!",
-        "kk": "📸 Фото қызметтері ботына қош келдіңіз!"
-    },
-    "choose_lang": {
-        "qq": "🌐 Tildi tańlań",
-        "uz": "🌐 Tilni tanlang",
-        "ru": "🌐 Выберите язык",
-        "en": "🌐 Choose language",
-        "kk": "🌐 Тілді таңдаңыз"
-    },
     "menu": {
-        "qq": "📸 Xızmetti tańlań:",
-        "uz": "📸 Xizmatni tanlang:",
-        "ru": "📸 Выберите услугу:",
-        "en": "📸 Select service:",
-        "kk": "📸 Қызметті таңдаңыз:"
+        "qq": "Xızmetti tańlań:",
+        "uz": "Xizmatni tanlang:",
+        "ru": "Выберите услугу:",
+        "en": "Choose a service:",
+        "kk": "Қызметті таңдаңыз:"
     },
     "confirm": {
         "qq": "Davom etemizbe?",
@@ -95,13 +44,6 @@ TEXTS = {
         "en": "Shall we continue?",
         "kk": "Жалғастырамыз ба?"
     },
-    "cancel": {
-        "qq": "❌ Biykarlaw",
-        "uz": "❌ Bekor qilish",
-        "ru": "❌ Отмена",
-        "en": "❌ Cancel",
-        "kk": "❌ Болдырмау"
-    },
     "continue": {
         "qq": "✅ Davom etemiz",
         "uz": "✅ Davom etamiz",
@@ -109,12 +51,26 @@ TEXTS = {
         "en": "✅ Continue",
         "kk": "✅ Жалғастыру"
     },
-    "photo": {
-        "qq": "📷 Surat jiberiñ (foto yoki fayl)",
-        "uz": "📷 Rasm yuboring (foto yoki fayl)",
-        "ru": "📷 Отправьте изображение",
-        "en": "📷 Send image",
-        "kk": "📷 Суретті жіберіңіз"
+    "cancel": {
+        "qq": "❌ Biykarlaw",
+        "uz": "❌ Bekor qilish",
+        "ru": "❌ Отмена",
+        "en": "❌ Cancel",
+        "kk": "❌ Болдырмау"
+    },
+    "send_photo": {
+        "qq": "📷 Foto yáki fayl jiberiń",
+        "uz": "📷 Rasm yoki fayl yuboring",
+        "ru": "📷 Отправьте фото или файл",
+        "en": "📷 Send photo or file",
+        "kk": "📷 Фото немесе файл жіберіңіз"
+    },
+    "admin_menu": {
+        "qq": "🛠 Admin panel",
+        "uz": "🛠 Admin panel",
+        "ru": "🛠 Админ панель",
+        "en": "🛠 Admin panel",
+        "kk": "🛠 Admin панелі"
     },
     "status_user": {
         "accepted": {
@@ -141,49 +97,18 @@ TEXTS = {
     }
 }
 
-# ================== SERVICES ==================
-SERVICES = {
-    "restore": {
-        "qq": "📷 Foto restavratsiya",
-        "uz": "📷 Foto restavratsiya",
-        "ru": "📷 Реставрация фото",
-        "en": "📷 Photo restoration",
-        "kk": "📷 Фото реставрация"
-    },
-    "4k": {
-        "qq": "🖼 4K / 8K qılıw",
-        "uz": "🖼 4K / 8K qilish",
-        "ru": "🖼 Сделать 4K / 8K",
-        "en": "🖼 Make 4K / 8K",
-        "kk": "🖼 4K / 8K жасау"
-    },
-    "video": {
-        "qq": "🎞 Video qılıw",
-        "uz": "🎞 Video qilish",
-        "ru": "🎞 Сделать видео",
-        "en": "🎞 Make video",
-        "kk": "🎞 Видео жасау"
-    }
-}
+# ================== HELPERS ==================
 
-PRICES = {
-    "restore": "50 000 so‘m",
-    "4k": "30 000 so‘m",
-    "video": "80 000 so‘m"
-}
+def get_lang(user_id: int) -> str:
+    return "uz"  # 🔧 xohlasangiz DB bilan qilamiz
 
-# ================== FSM ==================
-class Order(StatesGroup):
-    photo = State()
-    comment = State()
-    phone = State()
-
-# ================== KEYBOARDS ==================
 def get_menu(lang):
-    return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text=SERVICES[k][lang])] for k in SERVICES],
-        resize_keyboard=True
-    )
+    kb = [
+        [KeyboardButton(text="📸 Foto xizmat")],
+    ]
+    if lang:
+        pass
+    return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
 def get_confirm_kb(lang):
     return ReplyKeyboardMarkup(
@@ -195,146 +120,98 @@ def get_confirm_kb(lang):
         one_time_keyboard=True
     )
 
-phone_kb = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="📞 Telefon raqam yuborish", request_contact=True)]],
-    resize_keyboard=True,
-    one_time_keyboard=True
-)
+# ================== USER HANDLERS ==================
 
-lang_kb = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        InlineKeyboardButton(text="Qaraqalpaqsha", callback_data="lang_qq"),
-        InlineKeyboardButton(text="O'zbekcha", callback_data="lang_uz")
-    ],
-    [
-        InlineKeyboardButton(text="Русский", callback_data="lang_ru"),
-        InlineKeyboardButton(text="English", callback_data="lang_en")
-    ],
-    [
-        InlineKeyboardButton(text="Qazaqsha", callback_data="lang_kk")
-    ]
-])
+@dp.message(F.text == "/start")
+async def start(message: Message):
+    lang = get_lang(message.from_user.id)
+    await message.answer(TEXTS["menu"][lang], reply_markup=get_menu(lang))
 
-def admin_buttons(order_id):
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏳ Accepted", callback_data=f"status:{order_id}:accepted")],
-        [InlineKeyboardButton(text="⚙️ Working", callback_data=f"status:{order_id}:working")],
-        [InlineKeyboardButton(text="✅ Done", callback_data=f"status:{order_id}:done")]
-    ])
-
-# ================== HANDLERS ==================
-@dp.message(CommandStart())
-async def start(message: Message, state: FSMContext):
-    await state.clear()
-    await message.answer(TEXTS["choose_lang"]["uz"], reply_markup=lang_kb)
-
-@dp.callback_query(F.data.startswith("lang_"))
-async def set_language(call: CallbackQuery):
-    lang = call.data.split("_")[1]
-    set_lang(call.from_user.id, lang)
-    await call.message.answer(TEXTS["start"][lang])
-    await call.message.answer(TEXTS["menu"][lang], reply_markup=get_menu(lang))
-    await call.answer()
-
-@dp.message()
+@dp.message(F.text == "📸 Foto xizmat")
 async def select_service(message: Message, state: FSMContext):
     lang = get_lang(message.from_user.id)
-    for key in SERVICES:
-        if message.text == SERVICES[key][lang]:
-            await state.update_data(service=key)
-            await message.answer(
-                f"💰 {PRICES[key]}\n\n{TEXTS['confirm'][lang]}",
-                reply_markup=get_confirm_kb(lang)
-            )
-            return
+    await message.answer(
+        f"💰 Narx: 10 000 so'm\n\n{TEXTS['confirm'][lang]}",
+        reply_markup=get_confirm_kb(lang)
+    )
+
+@dp.message(lambda m: m.text in TEXTS["continue"].values())
+async def confirm_order(message: Message, state: FSMContext):
+    lang = get_lang(message.from_user.id)
+    await state.set_state(Order.waiting_photo)
+    await message.answer(TEXTS["send_photo"][lang], reply_markup=ReplyKeyboardRemove())
 
 @dp.message(lambda m: m.text in TEXTS["cancel"].values())
-async def cancel(message: Message, state: FSMContext):
+async def cancel_order(message: Message, state: FSMContext):
     await state.clear()
     lang = get_lang(message.from_user.id)
     await message.answer(TEXTS["menu"][lang], reply_markup=get_menu(lang))
 
-@dp.message(lambda m: m.text in TEXTS["continue"].values())
-async def continue_order(message: Message, state: FSMContext):
-    lang = get_lang(message.from_user.id)
-    await state.set_state(Order.photo)
-    await message.answer(TEXTS["photo"][lang], reply_markup=ReplyKeyboardRemove())
+# ================== PHOTO OR FILE ==================
 
-@dp.message(Order.photo)
-async def get_photo(message: Message, state: FSMContext):
+@dp.message(Order.waiting_photo)
+async def get_photo_or_file(message: Message, state: FSMContext):
+    file_id = None
+
     if message.photo:
         file_id = message.photo[-1].file_id
-    elif message.document and message.document.mime_type.startswith("image/"):
+    elif message.document:
         file_id = message.document.file_id
     else:
-        await message.answer("❌ Faqat rasm yuboring")
+        await message.answer("❌ Iltimos, foto yoki fayl yuboring")
         return
 
-    await state.update_data(photo=file_id)
+    await state.update_data(file_id=file_id)
     await state.set_state(Order.comment)
-    await message.answer("📝 Izoh yozing:")
+    await message.answer("✍️ Izoh yozing (yoki - deb yuboring)")
 
 @dp.message(Order.comment, F.text)
-async def get_comment(message: Message, state: FSMContext):
-    await state.update_data(comment=message.text)
-    await state.set_state(Order.phone)
-    await message.answer("📞 Telefon raqamingizni yuboring:", reply_markup=phone_kb)
-
-@dp.message(Order.phone, F.contact)
-async def get_phone(message: Message, state: FSMContext):
+async def finish_order(message: Message, state: FSMContext):
     data = await state.get_data()
-    cursor.execute(
-        "INSERT INTO orders (service, price, comment, phone, status, user_id) VALUES (?, ?, ?, ?, ?, ?)",
-        (data["service"], PRICES[data["service"]], data["comment"],
-         message.contact.phone_number, "accepted", message.from_user.id)
-    )
-    conn.commit()
-    order_id = cursor.lastrowid
-
-    await bot.send_photo(
-        ADMIN_ID,
-        data["photo"],
-        caption=f"🆕 BUYURTMA #{order_id}\n📌 {data['service']}\n💰 {PRICES[data['service']]}\n📞 {message.contact.phone_number}",
-        reply_markup=admin_buttons(order_id)
-    )
-
-    lang = get_lang(message.from_user.id)
-    await message.answer("✅ Buyurtma qabul qilindi!", reply_markup=get_menu(lang))
     await state.clear()
 
-@dp.callback_query(F.data.startswith("status:"))
-async def change_status(call: CallbackQuery):
-    _, order_id, status = call.data.split(":")
-    cursor.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
-    user_id = cursor.fetchone()[0]
-    lang = get_lang(user_id)
+    for admin in ADMIN_IDS:
+        await bot.send_message(
+            admin,
+            f"🆕 Yangi buyurtma\n"
+            f"👤 @{message.from_user.username}\n"
+            f"💬 Izoh: {message.text}"
+        )
+        await bot.send_document(admin, data["file_id"])
 
-    cursor.execute("UPDATE orders SET status=? WHERE id=?", (status, order_id))
-    conn.commit()
+    await message.answer("✅ Buyurtma yuborildi")
 
-    await bot.send_message(user_id, TEXTS["status_user"][status][lang])
-    await call.answer("OK")
+# ================== ADMIN ==================
+
+@dp.message(F.text == "/admin")
+async def admin_panel(message: Message):
+    if message.from_user.id not in ADMIN_IDS:
+        return
+    lang = get_lang(message.from_user.id)
+    await message.answer(TEXTS["admin_menu"][lang])
 
 # ================== WEBHOOK ==================
-async def handle_update(request: web.Request):
-    update = types.Update(**await request.json())
-    await dp.process_update(update)
+
+async def telegram_webhook(request):
+    update = Update.model_validate(await request.json())
+    await dp.feed_update(bot, update)
     return web.Response(text="OK")
 
-async def healthcheck(request):
-    return web.Response(text="OK")
+async def on_startup(app):
+    await bot.set_webhook(WEBHOOK_URL)
+    print("Webhook set")
 
-async def main():
-    app = web.Application()
-    app.router.add_post(f"/webhook/{TOKEN}", handle_update)
-    app.router.add_get("/", healthcheck)
+async def on_shutdown(app):
+    await bot.delete_webhook()
+    await bot.session.close()
 
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", PORT)
-    await site.start()
+# ================== APP ==================
 
-    print("Webhook server started")
+app = web.Application()
+app.router.add_post(WEBHOOK_PATH, telegram_webhook)
+app.on_startup.append(on_startup)
+app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    print("Webhook server started")
+    web.run_app(app, host="0.0.0.0", port=10000)
