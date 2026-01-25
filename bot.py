@@ -18,7 +18,6 @@ PAYMENT_TOKEN = os.getenv("PAYMENT_TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
 BASE_URL = os.getenv("BASE_URL")
-# Webhook yo'li
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
 WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
 
@@ -66,21 +65,22 @@ TEXTS = {
         "uz": "Xizmat uchun to'lovni amalga oshiring",
         "ru": "Пожалуйста, оплатите услугу", "en": "Please pay for the service", "qq": "Xızmet ushın tólemdi ámelge asırıń", "kk": "Қызмет үшін төлем жасаңыз"
     },
+    # --- O'ZGARTIRILDI: FAYL QILIB YUBORISH HAQIDA ESLATMA ---
     "after_pay": {
-        "uz": "✅ To'lov qabul qilindi!\nEndi rasm yoki faylni yuboring:",
-        "ru": "✅ Оплата принята!\nТеперь отправьте фото или файл:",
-        "en": "✅ Payment accepted!\nNow send the photo or file:",
-        "qq": "✅ Tólem qabıl etildi!\nEndi súwret yaki fayldı jiberiń:",
-        "kk": "✅ Төлем қабылданды!\nЕнді сурет немесе файл жіберіңіз:"
+        "uz": "✅ To'lov qabul qilindi!\n\n📂 <b>Iltimos, sifat buzilmasligi uchun rasmni FAYL (Document) ko'rinishida yuboring:</b>",
+        "ru": "✅ Оплата принята!\n\n📂 <b>Пожалуйста, отправьте фото как ФАЙЛ (Документ), чтобы не потерять качество:</b>",
+        "en": "✅ Payment accepted!\n\n📂 <b>Please send the photo as a FILE (Document) to preserve quality:</b>",
+        "qq": "✅ Tólem qabıl etildi!\n\n📂 <b>Sapa buzılmawı ushın súwretti ilaji barınsha FAYL (Document) retinde jiberiń:</b>",
+        "kk": "✅ Төлем қабылданды!\n\n📂 <b>Сапасы бұзылмас үшін суретті ФАЙЛ (Құжат) ретінде жіберіңіз:</b>"
     },
     "send_comment": {
-        "uz": "📝 Izoh yozing:", "ru": "📝 Напишите комментарий:", "en": "📝 Write a comment:", "qq": "📝 Izoh jazıń:", "kk": "📝 Пікір жазыңыз:"
+        "uz": "📝 Izoh yozing (nima qilish kerak?):", "ru": "📝 Напишите комментарий (что нужно сделать?):", "en": "📝 Write a comment:", "qq": "📝 Izoh jazıń (ne qılıw kerek?):", "kk": "📝 Пікір жазыңыз:"
     },
     "send_phone": {
         "uz": "📞 Telefon raqamingizni yuboring:", "ru": "📞 Отправьте номер телефона:", "en": "📞 Send your phone number:", "qq": "📞 Telefon nomerińizdi jiberiń:", "kk": "📞 Телефон нөміріңізді жіберіңіз:"
     },
     "accepted": {
-        "uz": "⏳ Buyurtma qabul qilindi!", "ru": "⏳ Заказ принят!", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi!", "kk": "⏳ Тапсырыс қабылданды!"
+        "uz": "⏳ Buyurtma qabul qilindi! Tez orada aloqaga chiqamiz.", "ru": "⏳ Заказ принят! Скоро свяжемся.", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi! Tez arada baylanısqa shıǵamız.", "kk": "⏳ Тапсырыс қабылданды!"
     },
     "working": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ In progress", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
     "done": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" }
@@ -123,10 +123,13 @@ class Order(StatesGroup):
 # ================= START =================
 @dp.message(CommandStart())
 async def start(m: Message):
+    # --- O'ZGARTIRILDI: BAYROQLAR ---
+    # Qoraqalpoq tili uchun 🇺🇿 (Uzbekistan) bayrog'ini qoydim, chunki alohida emoji yo'q.
+    # Siz xohlasangiz shu qatorni o'zingizga yoqqan belgiga o'zgartirishingiz mumkin.
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🇺🇿 UZ", callback_data="lang_uz"), InlineKeyboardButton(text="🇷🇺 RU", callback_data="lang_ru")],
-        [InlineKeyboardButton(text="🇺🇸 EN", callback_data="lang_en"), InlineKeyboardButton(text="🇿🇦 QQ", callback_data="lang_qq")],
-        [InlineKeyboardButton(text="🇰🇿 KK", callback_data="lang_kk")]
+        [InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="lang_uz"), InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru")],
+        [InlineKeyboardButton(text="🇺🇸 English", callback_data="lang_en"), InlineKeyboardButton(text="🇺🇿 Qaraqalpaqsha", callback_data="lang_qq")], 
+        [InlineKeyboardButton(text="🇰🇿 Қазақша", callback_data="lang_kk")]
     ])
     await m.answer(TEXTS["choose_lang"]["uz"], reply_markup=kb)
 
@@ -165,7 +168,7 @@ async def send_invoice_handler(m: Message, state: FSMContext):
             currency="UZS",
             prices=[LabeledPrice(label=label, amount=price)],
             start_parameter="pay",
-            is_flexible=False  # ✅ CORRECT
+            is_flexible=False  
         )
         await state.set_state(Order.waiting_payment)
 
@@ -185,14 +188,17 @@ async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery):
 @dp.message(F.successful_payment)
 async def successful_payment_handler(m: Message, state: FSMContext):
     lang = get_lang(m.from_user.id)
-    await m.answer(TEXTS["after_pay"][lang], reply_markup=ReplyKeyboardRemove())
+    # Bu yerda TEXTS["after_pay"] ichida "Fayl qilib yuboring" deb yozilgan
+    await m.answer(TEXTS["after_pay"][lang], parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
     await state.set_state(Order.file)
 
 # ================= 4. DATA COLLECTION =================
 @dp.message(Order.file, F.photo | F.document)
 async def get_file(m: Message, state: FSMContext):
+    # Fayl yoki Rasm ekanligini aniqlash
     file_id = m.photo[-1].file_id if m.photo else m.document.file_id
     file_type = "photo" if m.photo else "document"
+    
     await state.update_data(file_id=file_id, file_type=file_type)
     await state.set_state(Order.comment)
     await m.answer(TEXTS["send_comment"][get_lang(m.from_user.id)])
@@ -217,8 +223,17 @@ async def finish(m: Message, state: FSMContext):
     db.commit()
     order_id = cur.lastrowid
 
-    # Admin xabar
-    caption = f"🆕 BUYURTMA #{order_id}\n💰 {int(amount)} UZS\n👤 {m.from_user.full_name}\n🛠 {service_name}\n📝 {data['comment']}\n📞 {phone}"
+    # Admin xabar (Fayl turi bilan)
+    file_status = "🖼 Rasm (Siquvda)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
+    caption = (
+        f"🆕 BUYURTMA #{order_id}\n"
+        f"💰 {int(amount)} UZS\n"
+        f"👤 {m.from_user.full_name}\n"
+        f"🛠 {service_name}\n"
+        f"📦 {file_status}\n"
+        f"📝 {data['comment']}\n"
+        f"📞 {phone}"
+    )
     
     try:
         if ADMIN_ID:
