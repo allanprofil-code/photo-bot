@@ -14,7 +14,7 @@ from aiogram.fsm.context import FSMContext
 
 # ================= ENV (SOZLAMALAR) =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-CLICK_TOKEN = os.getenv("CLICK_TOKEN")   # Faqat CLICK token qoldi
+CLICK_TOKEN = os.getenv("CLICK_TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
 SUPPORT_LINK = os.getenv("SUPPORT_LINK") 
 VIDEO_ID = os.getenv("VIDEO_ID")         
@@ -58,7 +58,7 @@ TEXTS = {
     "choose_lang": {
         "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
-    # --- OFERTA (Qisqa va Londa) ---
+    # OFERTA (Havolalar barcha tillar uchun bir xil qoldirildi)
     "offer_short": {
         "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
         
@@ -96,11 +96,14 @@ TEXTS = {
     "accepted": {
         "uz": "⏳ Buyurtma qabul qilindi! Tez orada aloqaga chiqamiz.", "ru": "⏳ Заказ принят! Скоро свяжемся.", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi! Tez arada baylanısqa shıǵamız.", "kk": "⏳ Тапсырыс қабылданды!"
     },
-    "working": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ In progress", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
-    "done": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" },
     "video_btn": { "uz": "🎬 Video Qo'llanma", "ru": "🎬 Видео инструкция", "en": "🎬 Video Tutorial", "qq": "🎬 Video Qollanba", "kk": "🎬 Видео Нұсқаулық" },
     "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járden", "kk": "👨‍💻 Әкімші / Қолдау" },
-    "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." }
+    "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." },
+    
+    # Statuslar (Admin uchun)
+    "accepted_st": { "uz": "⏳ Qabul", "ru": "⏳ Принят", "en": "⏳ Accepted", "qq": "⏳ Qabıllandı", "kk": "⏳ Қабылданды" },
+    "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
+    "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" }
 }
 
 SERVICES_CONFIG = {
@@ -126,9 +129,9 @@ def menu_kb(lang):
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏳ Qabul", callback_data=f"s:{order_id}:accepted")],
-        [InlineKeyboardButton(text="⚙️ Ishlanmoqda", callback_data=f"s:{order_id}:working")],
-        [InlineKeyboardButton(text="✅ Tayyor", callback_data=f"s:{order_id}:done")]
+        [InlineKeyboardButton(text="⏳ Qabul", callback_data=f"s:{order_id}:accepted_st")],
+        [InlineKeyboardButton(text="⚙️ Ishlanmoqda", callback_data=f"s:{order_id}:working_st")],
+        [InlineKeyboardButton(text="✅ Tayyor", callback_data=f"s:{order_id}:done_st")]
     ])
 
 # ================= FSM =================
@@ -141,7 +144,6 @@ class Order(StatesGroup):
 # ================= START =================
 @dp.message(CommandStart())
 async def start(m: Message):
-    # Til tanlash menyusi
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="lang_uz"), InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru")],
         [InlineKeyboardButton(text="🇺🇸 English", callback_data="lang_en"), InlineKeyboardButton(text="🇺🇿 Qaraqalpaqsha", callback_data="lang_qq")], 
@@ -153,18 +155,17 @@ async def start(m: Message):
 async def set_language(c: CallbackQuery):
     lang = c.data.split("_")[1]
     set_lang(c.from_user.id, lang)
-    
-    # 1. Qisqa Oferta matni (havolalar bilan)
     await c.message.answer(TEXTS["offer_short"][lang], parse_mode="HTML", disable_web_page_preview=True)
-    
-    # 2. Asosiy Menyu
     await c.message.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
     await c.answer()
 
-# ================= VIDEO & ADMIN HANDLERS =================
-@dp.message(lambda m: any(m.text == txt["uz"] or m.text == txt["ru"] or m.text == txt["qq"] for txt in [TEXTS["video_btn"], TEXTS["admin_btn"]]))
+# ================= VIDEO & ADMIN HANDLERS (TUZATILDI) =================
+# Mana shu yerda avval faqat 3 ta til bor edi, endi hamma tillarni avtomatik tekshiradi
+@dp.message(lambda m: any(m.text in txt.values() for txt in [TEXTS["video_btn"], TEXTS["admin_btn"]]))
 async def extra_buttons(m: Message):
     lang = get_lang(m.from_user.id)
+    
+    # Video tugmasi
     if m.text == TEXTS["video_btn"][lang]:
         if VIDEO_ID:
             try:
@@ -172,16 +173,17 @@ async def extra_buttons(m: Message):
             except:
                 await m.answer(TEXTS["no_video"][lang])
         else:
-            await m.answer("📹 Video instruktsiya tez orada yuklanadi.")
+            await m.answer(f"📹 {TEXTS['video_btn'][lang]}: https://youtube.com/...") # Vaqtincha havola
+
+    # Admin tugmasi
     elif m.text == TEXTS["admin_btn"][lang]:
         link = SUPPORT_LINK if SUPPORT_LINK else "https://t.me/admin"
-        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="👨‍💻 Admin", url=link)]])
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=TEXTS["admin_btn"][lang], url=link)]])
         await m.answer(TEXTS["admin_btn"][lang], reply_markup=kb)
 
 # ================= 1. XIZMAT TANLASH & TO'LOV =================
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def select_service(m: Message, state: FSMContext):
-    # Agar Click tokeni bo'lmasa, ogohlantirish
     if not CLICK_TOKEN:
         await m.answer("⚠️ Click token ulanmagan.")
         return
@@ -197,7 +199,6 @@ async def select_service(m: Message, state: FSMContext):
     
     await state.update_data(service=selected_service, price=price)
 
-    # To'g'ridan-to'g'ri Invoice yuboramiz (Tanlash shart emas)
     try:
         await bot.send_invoice(
             chat_id=m.chat.id,
@@ -283,15 +284,21 @@ async def finish(m: Message, state: FSMContext):
 # ================= ADMIN STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
 async def status(c: CallbackQuery):
-    _, oid, st = c.data.split(":")
-    cur.execute("UPDATE orders SET status=? WHERE id=?", (st, oid))
+    _, oid, st_key = c.data.split(":") # st_key = accepted_st, done_st...
+    
+    # Bazada faqat kalitni saqlaymiz (masalan: accepted_st)
+    cur.execute("UPDATE orders SET status=? WHERE id=?", (st_key, oid))
     db.commit()
     
     cur.execute("SELECT user_id FROM orders WHERE id=?", (oid,))
     res = cur.fetchone()
     if res:
         try:
-            await bot.send_message(res[0], TEXTS[st][get_lang(res[0])])
+            uid = res[0]
+            # Foydalanuvchi tiliga mos status matnini olamiz
+            u_lang = get_lang(uid)
+            status_text = TEXTS[st_key][u_lang]
+            await bot.send_message(uid, status_text)
         except: pass
     await c.answer("OK")
 
