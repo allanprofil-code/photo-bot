@@ -273,4 +273,51 @@ async def finish(m: Message, state: FSMContext):
             if data['file_type'] == "photo":
                 await bot.send_photo(admin_id_int, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
             else:
-                await bot.send_document(admin_id_int, data['file_id'], caption=caption, reply_markup=admin_kb
+                await bot.send_document(admin_id_int, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
+    except Exception as e:
+        print(f"Admin send error: {e}")
+
+    await m.answer(TEXTS["accepted"][lang], reply_markup=menu_kb(lang))
+    await state.clear()
+
+# ================= ADMIN STATUS =================
+@dp.callback_query(F.data.startswith("s:"))
+async def status(c: CallbackQuery):
+    _, oid, st = c.data.split(":")
+    cur.execute("UPDATE orders SET status=? WHERE id=?", (st, oid))
+    db.commit()
+    
+    cur.execute("SELECT user_id FROM orders WHERE id=?", (oid,))
+    res = cur.fetchone()
+    if res:
+        try:
+            await bot.send_message(res[0], TEXTS[st][get_lang(res[0])])
+        except: pass
+    await c.answer("OK")
+
+# ================= WEBHOOK =================
+async def webhook_handler(request):
+    try:
+        data = await request.json()
+        await dp.feed_update(bot, Update.model_validate(data))
+        return web.Response(text="OK")
+    except: return web.Response(text="Error", status=500)
+
+async def home_handler(request):
+    return web.Response(text="Bot is running!")
+
+async def on_startup(app):
+    await bot.set_webhook(WEBHOOK_URL)
+
+async def on_shutdown(app):
+    await bot.delete_webhook()
+    await bot.session.close()
+
+app = web.Application()
+app.router.add_post(WEBHOOK_PATH, webhook_handler)
+app.router.add_get('/', home_handler)
+app.on_startup.append(on_startup)
+app.on_shutdown.append(on_shutdown)
+
+if __name__ == "__main__":
+    web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
