@@ -12,10 +12,13 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-# ================= ENV =================
+# ================= ENV (SOZLAMALAR) =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-PAYMENT_TOKEN = os.getenv("PAYMENT_TOKEN") 
+CLICK_TOKEN = os.getenv("CLICK_TOKEN")   # Click Token
+PAYME_TOKEN = os.getenv("PAYME_TOKEN")   # Payme Token
 ADMIN_ID = os.getenv("ADMIN_ID")
+SUPPORT_LINK = os.getenv("SUPPORT_LINK") # Admin yoki Support boti havolasi (masalan: https://t.me/admin_user)
+VIDEO_ID = os.getenv("VIDEO_ID")         # Video file_id si (yoki havola)
 
 BASE_URL = os.getenv("BASE_URL")
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
@@ -42,6 +45,7 @@ CREATE TABLE IF NOT EXISTS orders(
     user_id INTEGER,
     service TEXT,
     amount INTEGER,
+    provider TEXT,
     comment TEXT,
     phone TEXT,
     status TEXT,
@@ -55,6 +59,18 @@ TEXTS = {
     "choose_lang": {
         "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
+    # OFERTA MATNI (Asosan Rus tilida berilgani uchun hamma tilga shuni qo'yamiz yoki tarjima qilasiz)
+    "offer_text": {
+        "uz": "<b>⚠️ Diqqat! Botdan foydalanish orqali siz quyidagi hujjatlar shartlariga rozilik bildirasiz:</b>\n\n📌 <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Maxfiylik siyosati</a>\n📌 <a href='https://docs.google.com/document/d/1T4pocBBnRaUoTXXfh0sqK5G4Jn4BW1QS/edit?usp=sharing'>Shaxsiy ma'lumotlarni qayta ishlash</a>\n📌 <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta (Shartnoma)</a>",
+        
+        "ru": "<b>⚠️ Внимание! Используя данный бот, вы автоматически соглашаетесь с условиями следующих документов:</b>\n\n📌 <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Политика конфиденциальности</a>\n📌 <a href='https://docs.google.com/document/d/1T4pocBBnRaUoTXXfh0sqK5G4Jn4BW1QS/edit?usp=sharing'>Согласие на обработку персональных данных</a>\n📌 <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Договор Оферты</a>",
+        
+        "en": "<b>⚠️ Attention! By using this bot, you agree to the terms of the following documents:</b>\n\n📌 <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Privacy Policy</a>\n📌 <a href='https://docs.google.com/document/d/1T4pocBBnRaUoTXXfh0sqK5G4Jn4BW1QS/edit?usp=sharing'>Data Processing Agreement</a>\n📌 <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Public Offer</a>",
+        
+        "qq": "<b>⚠️ Diqqat! Bottan paydalanıw arqalı siz tómendegi hújjet shártlerine razılıq bildiresiz:</b>\n\n📌 <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a>\n📌 <a href='https://docs.google.com/document/d/1T4pocBBnRaUoTXXfh0sqK5G4Jn4BW1QS/edit?usp=sharing'>Jeke maǵlıwmatlardı qayta islew</a>\n📌 <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a>",
+        
+        "kk": "<b>⚠️ Назар аударыңыз! Ботты пайдалану арқылы сіз келесі құжаттардың шарттарымен келісесіз:</b>\n\n📌 <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a>\n📌 <a href='https://docs.google.com/document/d/1T4pocBBnRaUoTXXfh0sqK5G4Jn4BW1QS/edit?usp=sharing'>Дербес деректерді өңдеу</a>\n📌 <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта шарты</a>"
+    },
     "menu": {
         "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
     },
@@ -65,7 +81,9 @@ TEXTS = {
         "uz": "Xizmat uchun to'lovni amalga oshiring",
         "ru": "Пожалуйста, оплатите услугу", "en": "Please pay for the service", "qq": "Xızmet ushın tólemdi ámelge asırıń", "kk": "Қызмет үшін төлем жасаңыз"
     },
-    # --- O'ZGARTIRILDI: FAYL QILIB YUBORISH HAQIDA ESLATMA ---
+    "choose_payment": {
+        "uz": "💳 To'lov turini tanlang:", "ru": "💳 Выберите тип оплаты:", "en": "💳 Select payment method:", "qq": "💳 Tólem túrin tańlań:", "kk": "💳 Төлем түрін таңдаңыз:"
+    },
     "after_pay": {
         "uz": "✅ To'lov qabul qilindi!\n\n📂 <b>Iltimos, sifat buzilmasligi uchun rasmni FAYL (Document) ko'rinishida yuboring:</b>",
         "ru": "✅ Оплата принята!\n\n📂 <b>Пожалуйста, отправьте фото как ФАЙЛ (Документ), чтобы не потерять качество:</b>",
@@ -83,7 +101,10 @@ TEXTS = {
         "uz": "⏳ Buyurtma qabul qilindi! Tez orada aloqaga chiqamiz.", "ru": "⏳ Заказ принят! Скоро свяжемся.", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi! Tez arada baylanısqa shıǵamız.", "kk": "⏳ Тапсырыс қабылданды!"
     },
     "working": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ In progress", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
-    "done": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" }
+    "done": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" },
+    "video_btn": { "uz": "🎬 Video Qo'llanma", "ru": "🎬 Видео инструкция", "en": "🎬 Video Tutorial", "qq": "🎬 Video Qollanba", "kk": "🎬 Видео Нұсқаулық" },
+    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járden", "kk": "👨‍💻 Әкімші / Қолдау" },
+    "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." }
 }
 
 SERVICES_CONFIG = {
@@ -103,8 +124,17 @@ def set_lang(uid, lang):
     db.commit()
 
 def menu_kb(lang):
+    # Asosiy xizmatlar
     buttons = [[KeyboardButton(text=s["names"][lang])] for s in SERVICES_CONFIG.values()]
+    # Qo'shimcha tugmalar (Video va Admin)
+    buttons.append([KeyboardButton(text=TEXTS["video_btn"][lang]), KeyboardButton(text=TEXTS["admin_btn"][lang])])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
+
+def payment_kb(lang):
+    return ReplyKeyboardMarkup(keyboard=[
+        [KeyboardButton(text="Click"), KeyboardButton(text="Payme")],
+        [KeyboardButton(text=TEXTS["choose_lang"][lang] == "uz" and "Ortga" or "Back")] # Oddiy qaytish tugmasi
+    ], resize_keyboard=True, one_time_keyboard=True)
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -115,7 +145,8 @@ def admin_kb(order_id):
 
 # ================= FSM =================
 class Order(StatesGroup):
-    waiting_payment = State()
+    waiting_payment_method = State() # Click yoki Payme tanlash
+    waiting_payment = State()        # To'lov qilish
     file = State()
     comment = State()
     phone = State()
@@ -123,9 +154,6 @@ class Order(StatesGroup):
 # ================= START =================
 @dp.message(CommandStart())
 async def start(m: Message):
-    # --- O'ZGARTIRILDI: BAYROQLAR ---
-    # Qoraqalpoq tili uchun 🇺🇿 (Uzbekistan) bayrog'ini qoydim, chunki alohida emoji yo'q.
-    # Siz xohlasangiz shu qatorni o'zingizga yoqqan belgiga o'zgartirishingiz mumkin.
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="lang_uz"), InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru")],
         [InlineKeyboardButton(text="🇺🇸 English", callback_data="lang_en"), InlineKeyboardButton(text="🇺🇿 Qaraqalpaqsha", callback_data="lang_qq")], 
@@ -137,65 +165,108 @@ async def start(m: Message):
 async def set_language(c: CallbackQuery):
     lang = c.data.split("_")[1]
     set_lang(c.from_user.id, lang)
+    
+    # Oferta matnini yuborish
+    await c.message.answer(TEXTS["offer_text"][lang], parse_mode="HTML", disable_web_page_preview=True)
+    
+    # Menyu chiqarish
     await c.message.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
     await c.answer()
 
-# ================= 1. TO'LOV (INVOICE) =================
+# ================= VIDEO & ADMIN HANDLERS =================
+@dp.message(lambda m: any(m.text == txt["uz"] or m.text == txt["ru"] or m.text == txt["qq"] for txt in [TEXTS["video_btn"], TEXTS["admin_btn"]]))
+async def extra_buttons(m: Message):
+    lang = get_lang(m.from_user.id)
+    
+    # 1. VIDEO TUGMASI BOSILGANDA
+    if m.text == TEXTS["video_btn"][lang]:
+        if VIDEO_ID:
+            try:
+                await m.answer_video(video=VIDEO_ID, caption=TEXTS["video_btn"][lang])
+            except:
+                await m.answer(TEXTS["no_video"][lang])
+        else:
+             # Agar ID hali kiritilmagan bo'lsa, link yuboradi (muvaqqat yechim)
+            await m.answer("📹 Video instruktsiya: https://youtube.com/...")
+
+    # 2. ADMIN TUGMASI BOSILGANDA
+    elif m.text == TEXTS["admin_btn"][lang]:
+        link = SUPPORT_LINK if SUPPORT_LINK else "https://t.me/admin"
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="👨‍💻 Admin", url=link)]])
+        await m.answer(TEXTS["admin_btn"][lang], reply_markup=kb)
+
+# ================= 1. XIZMAT TANLASH =================
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
-async def send_invoice_handler(m: Message, state: FSMContext):
+async def select_service(m: Message, state: FSMContext):
+    lang = get_lang(m.from_user.id)
+    selected_service = next((k for k, v in SERVICES_CONFIG.items() if v["names"][lang] == m.text), None)
+    
+    if not selected_service:
+        return
+
+    price = SERVICES_CONFIG[selected_service]["price"]
+    await state.update_data(service=selected_service, price=price)
+    
+    # To'lov turini tanlashga yuboramiz
+    await m.answer(TEXTS["choose_payment"][lang], reply_markup=payment_kb(lang))
+    await state.set_state(Order.waiting_payment_method)
+
+# ================= 2. TO'LOV TIZIMINI TANLASH =================
+@dp.message(Order.waiting_payment_method)
+async def payment_method_chosen(m: Message, state: FSMContext):
+    lang = get_lang(m.from_user.id)
+    
+    if m.text not in ["Click", "Payme"]:
+        # Agar "Ortga" bosilsa yoki xato narsa yozilsa
+        await state.clear()
+        await m.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
+        return
+
+    # Qaysi token kerakligini aniqlaymiz
+    token = CLICK_TOKEN if m.text == "Click" else PAYME_TOKEN
+    
+    if not token:
+        await m.answer(f"⚠️ {m.text} tokeni hali ulanmagan.")
+        return
+
+    data = await state.get_data()
+    service_key = data["service"]
+    price = data["price"]
+    label = SERVICES_CONFIG[service_key]["names"][lang]
+    
+    await state.update_data(provider=m.text)
+
     try:
-        if not PAYMENT_TOKEN:
-            await m.answer("⚠️ To'lov tizimi ulanmagan.")
-            return
-
-        lang = get_lang(m.from_user.id)
-        selected_service = next((k for k, v in SERVICES_CONFIG.items() if v["names"][lang] == m.text), None)
-        
-        if not selected_service:
-            return
-
-        price = SERVICES_CONFIG[selected_service]["price"]
-        label = SERVICES_CONFIG[selected_service]["names"][lang]
-
-        await state.update_data(service=selected_service, price=price)
-        
         await bot.send_invoice(
             chat_id=m.chat.id,
             title=TEXTS["invoice_title"][lang],
             description=f"{TEXTS['invoice_desc'][lang]}: {label}",
-            payload=f"pay_{selected_service}",
-            provider_token=PAYMENT_TOKEN,
+            payload=f"pay_{service_key}",
+            provider_token=token,
             currency="UZS",
             prices=[LabeledPrice(label=label, amount=price)],
             start_parameter="pay",
             is_flexible=False  
         )
         await state.set_state(Order.waiting_payment)
-
     except Exception as e:
         await m.answer(f"Xatolik: {e}")
-        print(f"ERROR: {e}")
 
-# ================= 2. PRE-CHECKOUT =================
+# ================= 3. PRE-CHECKOUT =================
 @dp.pre_checkout_query()
 async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery):
-    try:
-        await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
-    except Exception as e:
-        print(f"Pre-checkout error: {e}")
+    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
-# ================= 3. SUCCESS =================
+# ================= 4. TO'LOV SUCCESS =================
 @dp.message(F.successful_payment)
 async def successful_payment_handler(m: Message, state: FSMContext):
     lang = get_lang(m.from_user.id)
-    # Bu yerda TEXTS["after_pay"] ichida "Fayl qilib yuboring" deb yozilgan
     await m.answer(TEXTS["after_pay"][lang], parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
     await state.set_state(Order.file)
 
-# ================= 4. DATA COLLECTION =================
+# ================= 5. FAYL & MA'LUMOTLAR =================
 @dp.message(Order.file, F.photo | F.document)
 async def get_file(m: Message, state: FSMContext):
-    # Fayl yoki Rasm ekanligini aniqlash
     file_id = m.photo[-1].file_id if m.photo else m.document.file_id
     file_type = "photo" if m.photo else "document"
     
@@ -218,16 +289,15 @@ async def finish(m: Message, state: FSMContext):
     amount = data['price'] / 100
     service_name = SERVICES_CONFIG[data["service"]]["names"][lang]
 
-    cur.execute("INSERT INTO orders(user_id, service, amount, comment, phone, status, file_id) VALUES(?,?,?,?,?,?,?)",
-                (m.from_user.id, service_name, amount, data["comment"], phone, "paid_accepted", data["file_id"]))
+    cur.execute("INSERT INTO orders(user_id, service, amount, provider, comment, phone, status, file_id) VALUES(?,?,?,?,?,?,?,?)",
+                (m.from_user.id, service_name, amount, data["provider"], data["comment"], phone, "paid_accepted", data["file_id"]))
     db.commit()
     order_id = cur.lastrowid
 
-    # Admin xabar (Fayl turi bilan)
     file_status = "🖼 Rasm (Siquvda)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
     caption = (
         f"🆕 BUYURTMA #{order_id}\n"
-        f"💰 {int(amount)} UZS\n"
+        f"💰 {int(amount)} UZS ({data['provider']})\n"
         f"👤 {m.from_user.full_name}\n"
         f"🛠 {service_name}\n"
         f"📦 {file_status}\n"
