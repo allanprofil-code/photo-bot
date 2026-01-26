@@ -60,11 +60,11 @@ TEXTS = {
         "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
     "offer_short": {
-        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'> Ǵalabalıq oferta</a> hám <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
         "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
-        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта</a> және <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a> шарттарымен келісесіз.",
         "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с условиями <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Публичной оферты</a> и <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Политики конфиденциальности</a>.",
         "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Public Offer</a> and <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Privacy Policy</a>.",
+        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> hám <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
+        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта</a> және <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a> шарттарымен келісесіз."
     },
     "menu": {
         "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
@@ -99,7 +99,7 @@ TEXTS = {
     # Statuslar
     "accepted_st": { "uz": "⏳ Qabul", "ru": "⏳ Принят", "en": "⏳ Accepted", "qq": "⏳ Qabıllandı", "kk": "⏳ Қабылданды" },
     "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
-    "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" }
+    "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayın", "kk": "✅ Дайын" }
 }
 
 SERVICES_CONFIG = {
@@ -125,7 +125,7 @@ def menu_kb(lang):
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏳ Qabıl etildi", callback_data=f"s:{order_id}:accepted_st")],
+        [InlineKeyboardButton(text="⏳ Qabıllandı", callback_data=f"s:{order_id}:accepted_st")],
         [InlineKeyboardButton(text="⚙️ Islenbekte", callback_data=f"s:{order_id}:working_st")],
         [InlineKeyboardButton(text="✅ Tayın", callback_data=f"s:{order_id}:done_st")]
     ])
@@ -140,10 +140,14 @@ class Order(StatesGroup):
 # ================= START =================
 @dp.message(CommandStart())
 async def start(m: Message):
+    # --- O'ZGARTIRILDI: Bayroqsiz va yangi tartib ---
+    # Tartib: QQ -> UZ -> KK -> RU -> EN
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="lang_uz"), InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru")],
-        [InlineKeyboardButton(text="🇺🇸 English", callback_data="lang_en"), InlineKeyboardButton(text="🇺🇿 Qaraqalpaqsha", callback_data="lang_qq")], 
-        [InlineKeyboardButton(text="🇰🇿 Қазақша", callback_data="lang_kk")]
+        [InlineKeyboardButton(text="Qaraqalpaqsha", callback_data="lang_qq")],
+        [InlineKeyboardButton(text="O'zbekcha", callback_data="lang_uz")],
+        [InlineKeyboardButton(text="Qazaqsha", callback_data="lang_kk")],
+        [InlineKeyboardButton(text="Русский", callback_data="lang_ru")],
+        [InlineKeyboardButton(text="English", callback_data="lang_en")]
     ])
     await m.answer(TEXTS["choose_lang"]["uz"], reply_markup=kb)
 
@@ -176,7 +180,7 @@ async def extra_buttons(m: Message):
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def select_service(m: Message, state: FSMContext):
     if not CLICK_TOKEN:
-        await m.answer("⚠️ Click token ulanmagan.")
+        await m.answer("⚠️ Click token jalǵanbaǵan.")
         return
 
     lang = get_lang(m.from_user.id)
@@ -190,6 +194,7 @@ async def select_service(m: Message, state: FSMContext):
     
     await state.update_data(service=selected_service, price=price)
 
+    # To'g'ridan-to'g'ri Invoice yuborish (Tezlashtirilgan)
     try:
         await bot.send_invoice(
             chat_id=m.chat.id,
@@ -248,7 +253,7 @@ async def finish(m: Message, state: FSMContext):
 
     file_status = "🖼 Rasm (Siquvda)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
     caption = (
-        f"🆕 Zakaz #{order_id}\n"
+        f"🆕 BUYÍRTPA #{order_id}\n"
         f"💰 {int(amount)} UZS (Click)\n"
         f"👤 {m.from_user.full_name}\n"
         f"🛠 {service_name}\n"
@@ -271,9 +276,10 @@ async def finish(m: Message, state: FSMContext):
     await m.answer(TEXTS["accepted"][lang], reply_markup=menu_kb(lang))
     await state.clear()
 
-# ================= 4. ADMIN JAVOB YUBORISH (TUZATILDI) =================
+# ================= 4. ADMIN JAVOB YUBORISH (Kanal yoki Bot) =================
 @dp.message(F.caption.contains("#") | F.text.contains("#"))
 async def admin_send_result(m: Message):
+    # Faqat admin javob bera oladi
     if str(m.from_user.id) != str(ADMIN_ID):
         return
 
@@ -286,7 +292,7 @@ async def admin_send_result(m: Message):
                 break
         
         if not order_id.isdigit():
-            await m.reply("⚠️ Buyırtpa nomeri tabılmadı. Mısalı: `#15` deǵ jazıń.")
+            # Agar raqam topilmasa, shunchaki e'tiborsiz qoldiradi (xato bermaydi)
             return
 
         cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
@@ -298,13 +304,12 @@ async def admin_send_result(m: Message):
             cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
             db.commit()
             
-            # --- XATOLIK SABABI: REACT OLIB TASHLANDI ---
             await m.reply(f"✅ Fayl klientke jetkizildi! (ID: {user_id})")
         else:
-            await m.reply(f"⚠️ #{order_id} nomerli buyırtpa tabılmadı.")
+            await m.reply(f"⚠️ #{order_id} raqamli buyurtma topilmadi.")
 
     except Exception as e:
-        await m.reply(f"Qátelik: {e}")
+        await m.reply(f"Xatolik: {e}")
 
 # ================= STATUS STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
@@ -349,4 +354,3 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
