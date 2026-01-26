@@ -15,7 +15,8 @@ from aiogram.fsm.context import FSMContext
 # ================= ENV (SOZLAMALAR) =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CLICK_TOKEN = os.getenv("CLICK_TOKEN")
-ADMIN_ID = os.getenv("ADMIN_ID")
+ADMIN_ID = os.getenv("ADMIN_ID")     # Bu xavfsizlik uchun (faqat siz javob yubora olasiz)
+CHANNEL_ID = os.getenv("CHANNEL_ID") # YANGI: Buyurtmalar tushadigan kanal ID si
 SUPPORT_LINK = os.getenv("SUPPORT_LINK") 
 VIDEO_ID = os.getenv("VIDEO_ID")         
 
@@ -58,16 +59,11 @@ TEXTS = {
     "choose_lang": {
         "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
-    # OFERTA (Havolalar barcha tillar uchun bir xil qoldirildi)
     "offer_short": {
         "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
-        
         "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с условиями <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Публичной оферты</a> и <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Политики конфиденциальности</a>.",
-        
         "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Public Offer</a> and <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Privacy Policy</a>.",
-        
         "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> hám <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
-        
         "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта</a> және <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a> шарттарымен келісесіз."
     },
     "menu": {
@@ -100,7 +96,7 @@ TEXTS = {
     "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járden", "kk": "👨‍💻 Әкімші / Қолдау" },
     "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." },
     
-    # Statuslar (Admin uchun)
+    # Statuslar
     "accepted_st": { "uz": "⏳ Qabul", "ru": "⏳ Принят", "en": "⏳ Accepted", "qq": "⏳ Qabıllandı", "kk": "⏳ Қабылданды" },
     "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
     "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" }
@@ -159,13 +155,10 @@ async def set_language(c: CallbackQuery):
     await c.message.answer(TEXTS["menu"][lang], reply_markup=menu_kb(lang))
     await c.answer()
 
-# ================= VIDEO & ADMIN HANDLERS (TUZATILDI) =================
-# Mana shu yerda avval faqat 3 ta til bor edi, endi hamma tillarni avtomatik tekshiradi
+# ================= VIDEO & ADMIN =================
 @dp.message(lambda m: any(m.text in txt.values() for txt in [TEXTS["video_btn"], TEXTS["admin_btn"]]))
 async def extra_buttons(m: Message):
     lang = get_lang(m.from_user.id)
-    
-    # Video tugmasi
     if m.text == TEXTS["video_btn"][lang]:
         if VIDEO_ID:
             try:
@@ -173,15 +166,13 @@ async def extra_buttons(m: Message):
             except:
                 await m.answer(TEXTS["no_video"][lang])
         else:
-            await m.answer(f"📹 {TEXTS['video_btn'][lang]}: https://youtube.com/...") # Vaqtincha havola
-
-    # Admin tugmasi
+            await m.answer(f"📹 {TEXTS['video_btn'][lang]}: https://youtube.com/...")
     elif m.text == TEXTS["admin_btn"][lang]:
         link = SUPPORT_LINK if SUPPORT_LINK else "https://t.me/admin"
         kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=TEXTS["admin_btn"][lang], url=link)]])
         await m.answer(TEXTS["admin_btn"][lang], reply_markup=kb)
 
-# ================= 1. XIZMAT TANLASH & TO'LOV =================
+# ================= 1. XIZMAT TANLASH =================
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def select_service(m: Message, state: FSMContext):
     if not CLICK_TOKEN:
@@ -215,24 +206,22 @@ async def select_service(m: Message, state: FSMContext):
     except Exception as e:
         await m.answer(f"Xatolik: {e}")
 
-# ================= 2. PRE-CHECKOUT =================
+# ================= 2. PAYMENTS =================
 @dp.pre_checkout_query()
 async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery):
     await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
 
-# ================= 3. TO'LOV SUCCESS =================
 @dp.message(F.successful_payment)
 async def successful_payment_handler(m: Message, state: FSMContext):
     lang = get_lang(m.from_user.id)
     await m.answer(TEXTS["after_pay"][lang], parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
     await state.set_state(Order.file)
 
-# ================= 4. FAYL & MA'LUMOTLAR =================
+# ================= 3. FAYL & FINISH =================
 @dp.message(Order.file, F.photo | F.document)
 async def get_file(m: Message, state: FSMContext):
     file_id = m.photo[-1].file_id if m.photo else m.document.file_id
     file_type = "photo" if m.photo else "document"
-    
     await state.update_data(file_id=file_id, file_type=file_type)
     await state.set_state(Order.comment)
     await m.answer(TEXTS["send_comment"][get_lang(m.from_user.id)])
@@ -268,25 +257,68 @@ async def finish(m: Message, state: FSMContext):
         f"📞 {phone}"
     )
     
+    # --- O'ZGARTIRILDI: KANALGA YUBORISH ---
     try:
-        if ADMIN_ID:
-            admin_id_int = int(ADMIN_ID)
-            if data['file_type'] == "photo":
-                await bot.send_photo(admin_id_int, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
-            else:
-                await bot.send_document(admin_id_int, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
+        dest_id = CHANNEL_ID if CHANNEL_ID else ADMIN_ID # Agar Kanal ID bo'lmasa, Adminga ketadi
+        dest_id = int(dest_id)
+        
+        if data['file_type'] == "photo":
+            await bot.send_photo(dest_id, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
+        else:
+            await bot.send_document(dest_id, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
     except Exception as e:
-        print(f"Admin send error: {e}")
+        print(f"Send error: {e}")
 
     await m.answer(TEXTS["accepted"][lang], reply_markup=menu_kb(lang))
     await state.clear()
 
-# ================= ADMIN STATUS =================
+# ================= 4. ADMIN JAVOB YUBORISH (YANGILANGAN) =================
+# Admin Botga kirib, fayl tashlab, izohiga #15 deb yozsa, bu mijozga ketadi
+@dp.message(F.caption.contains("#") | F.text.contains("#"))
+async def admin_send_result(m: Message):
+    # Faqat admin qila oladi
+    if str(m.from_user.id) != str(ADMIN_ID):
+        return
+
+    try:
+        # Xabardan ID ni ajratib olish
+        text_to_check = m.caption or m.text
+        # "#15" yoki "#15 tayyor" dan raqamni olamiz
+        order_id = ""
+        for word in text_to_check.split():
+            if word.startswith("#"):
+                order_id = word[1:] # '#' ni olib tashlaymiz
+                break
+        
+        if not order_id.isdigit():
+            await m.reply("⚠️ Buyurtma raqami topilmadi. Masalan: `#15` deb yozing.")
+            return
+
+        # Bazadan mijozni topish
+        cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
+        res = cur.fetchone()
+
+        if res:
+            user_id = res[0]
+            # Faylni mijozga ko'chirish
+            await bot.copy_message(chat_id=user_id, from_chat_id=m.chat.id, message_id=m.message_id, caption=m.caption)
+            
+            # Statusni yangilash
+            cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
+            db.commit()
+            
+            await m.react([{"type": "emoji", "emoji": "nm"}])
+            await m.reply(f"✅ Fayl mijozga yetkazildi! (ID: {user_id})")
+        else:
+            await m.reply(f"⚠️ #{order_id} raqamli buyurtma topilmadi.")
+
+    except Exception as e:
+        await m.reply(f"Xatolik: {e}")
+
+# ================= STATUS STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
 async def status(c: CallbackQuery):
-    _, oid, st_key = c.data.split(":") # st_key = accepted_st, done_st...
-    
-    # Bazada faqat kalitni saqlaymiz (masalan: accepted_st)
+    _, oid, st_key = c.data.split(":") 
     cur.execute("UPDATE orders SET status=? WHERE id=?", (st_key, oid))
     db.commit()
     
@@ -295,58 +327,11 @@ async def status(c: CallbackQuery):
     if res:
         try:
             uid = res[0]
-            # Foydalanuvchi tiliga mos status matnini olamiz
-            u_lang = get_lang(uid)
-            status_text = TEXTS[st_key][u_lang]
+            status_text = TEXTS[st_key][get_lang(uid)]
             await bot.send_message(uid, status_text)
         except: pass
     await c.answer("OK")
-# ================= ADMIN JAVOB QAYTARISH (REPLY) =================
-@dp.message(F.reply_to_message)
-async def admin_reply(m: Message):
-    # 1. Faqat Admin yozayotganini tekshiramiz
-    if str(m.from_user.id) != str(ADMIN_ID):
-        return
 
-    try:
-        # 2. Asl xabardan Order ID ni ajratib olamiz
-        # Admin xabari: "🆕 BUYURTMA #5 ..." deb boshlanadi
-        original_caption = m.reply_to_message.caption or m.reply_to_message.text
-        
-        if not original_caption or "#" not in original_caption:
-            await m.answer("⚠️ Bu xabar buyurtma emasga o'xshaydi.")
-            return
-
-        # "#" belgisidan keyingi raqamni olamiz
-        order_id = original_caption.split("#")[1].split()[0]
-
-        # 3. Bazadan mijoz ID sini topamiz
-        cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
-        res = cur.fetchone()
-
-        if res:
-            user_id = res[0]
-            
-            # 4. Admin yuborgan narsani (Rasm, Fayl, Video) mijozga ko'chiramiz
-            await bot.copy_message(
-                chat_id=user_id,
-                from_chat_id=m.chat.id,
-                message_id=m.message_id,
-                caption=m.caption  # Admin yozgan izohni ham qo'shamiz
-            )
-            
-            # 5. Statusni avtomatik "Tayyor" ga o'tkazamiz
-            cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
-            db.commit()
-            
-            await m.react([{"type": "emoji", "emoji": "nm"}]) # 👍 reaksiya bildiramiz
-            await m.answer(f"✅ Fayl mijozga yuborildi! (Buyurtma #{order_id})")
-            
-        else:
-            await m.answer("⚠️ Mijoz topilmadi (balki botni bloklagandir).")
-
-    except Exception as e:
-        await m.answer(f"Xatolik: {e}")
 # ================= WEBHOOK =================
 async def webhook_handler(request):
     try:
@@ -373,4 +358,3 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
