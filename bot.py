@@ -15,8 +15,8 @@ from aiogram.fsm.context import FSMContext
 # ================= ENV (SOZLAMALAR) =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CLICK_TOKEN = os.getenv("CLICK_TOKEN")
-ADMIN_ID = os.getenv("ADMIN_ID")     # Bu xavfsizlik uchun (faqat siz javob yubora olasiz)
-CHANNEL_ID = os.getenv("CHANNEL_ID") # YANGI: Buyurtmalar tushadigan kanal ID si
+ADMIN_ID = os.getenv("ADMIN_ID")
+CHANNEL_ID = os.getenv("CHANNEL_ID") 
 SUPPORT_LINK = os.getenv("SUPPORT_LINK") 
 VIDEO_ID = os.getenv("VIDEO_ID")         
 
@@ -257,9 +257,8 @@ async def finish(m: Message, state: FSMContext):
         f"📞 {phone}"
     )
     
-    # --- O'ZGARTIRILDI: KANALGA YUBORISH ---
     try:
-        dest_id = CHANNEL_ID if CHANNEL_ID else ADMIN_ID # Agar Kanal ID bo'lmasa, Adminga ketadi
+        dest_id = CHANNEL_ID if CHANNEL_ID else ADMIN_ID 
         dest_id = int(dest_id)
         
         if data['file_type'] == "photo":
@@ -272,42 +271,34 @@ async def finish(m: Message, state: FSMContext):
     await m.answer(TEXTS["accepted"][lang], reply_markup=menu_kb(lang))
     await state.clear()
 
-# ================= 4. ADMIN JAVOB YUBORISH (YANGILANGAN) =================
-# Admin Botga kirib, fayl tashlab, izohiga #15 deb yozsa, bu mijozga ketadi
+# ================= 4. ADMIN JAVOB YUBORISH (TUZATILDI) =================
 @dp.message(F.caption.contains("#") | F.text.contains("#"))
 async def admin_send_result(m: Message):
-    # Faqat admin qila oladi
     if str(m.from_user.id) != str(ADMIN_ID):
         return
 
     try:
-        # Xabardan ID ni ajratib olish
         text_to_check = m.caption or m.text
-        # "#15" yoki "#15 tayyor" dan raqamni olamiz
         order_id = ""
         for word in text_to_check.split():
             if word.startswith("#"):
-                order_id = word[1:] # '#' ni olib tashlaymiz
+                order_id = word[1:] 
                 break
         
         if not order_id.isdigit():
             await m.reply("⚠️ Buyurtma raqami topilmadi. Masalan: `#15` deb yozing.")
             return
 
-        # Bazadan mijozni topish
         cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
         res = cur.fetchone()
 
         if res:
             user_id = res[0]
-            # Faylni mijozga ko'chirish
             await bot.copy_message(chat_id=user_id, from_chat_id=m.chat.id, message_id=m.message_id, caption=m.caption)
-            
-            # Statusni yangilash
             cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
             db.commit()
             
-            await m.react([{"type": "emoji", "emoji": "nm"}])
+            # --- XATOLIK SABABI: REACT OLIB TASHLANDI ---
             await m.reply(f"✅ Fayl mijozga yetkazildi! (ID: {user_id})")
         else:
             await m.reply(f"⚠️ #{order_id} raqamli buyurtma topilmadi.")
