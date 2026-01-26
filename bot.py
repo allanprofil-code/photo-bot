@@ -301,7 +301,52 @@ async def status(c: CallbackQuery):
             await bot.send_message(uid, status_text)
         except: pass
     await c.answer("OK")
+# ================= ADMIN JAVOB QAYTARISH (REPLY) =================
+@dp.message(F.reply_to_message)
+async def admin_reply(m: Message):
+    # 1. Faqat Admin yozayotganini tekshiramiz
+    if str(m.from_user.id) != str(ADMIN_ID):
+        return
 
+    try:
+        # 2. Asl xabardan Order ID ni ajratib olamiz
+        # Admin xabari: "🆕 BUYURTMA #5 ..." deb boshlanadi
+        original_caption = m.reply_to_message.caption or m.reply_to_message.text
+        
+        if not original_caption or "#" not in original_caption:
+            await m.answer("⚠️ Bu xabar buyurtma emasga o'xshaydi.")
+            return
+
+        # "#" belgisidan keyingi raqamni olamiz
+        order_id = original_caption.split("#")[1].split()[0]
+
+        # 3. Bazadan mijoz ID sini topamiz
+        cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
+        res = cur.fetchone()
+
+        if res:
+            user_id = res[0]
+            
+            # 4. Admin yuborgan narsani (Rasm, Fayl, Video) mijozga ko'chiramiz
+            await bot.copy_message(
+                chat_id=user_id,
+                from_chat_id=m.chat.id,
+                message_id=m.message_id,
+                caption=m.caption  # Admin yozgan izohni ham qo'shamiz
+            )
+            
+            # 5. Statusni avtomatik "Tayyor" ga o'tkazamiz
+            cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
+            db.commit()
+            
+            await m.react([{"type": "emoji", "emoji": "nm"}]) # 👍 reaksiya bildiramiz
+            await m.answer(f"✅ Fayl mijozga yuborildi! (Buyurtma #{order_id})")
+            
+        else:
+            await m.answer("⚠️ Mijoz topilmadi (balki botni bloklagandir).")
+
+    except Exception as e:
+        await m.answer(f"Xatolik: {e}")
 # ================= WEBHOOK =================
 async def webhook_handler(request):
     try:
@@ -328,3 +373,4 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
