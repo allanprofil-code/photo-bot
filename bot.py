@@ -60,11 +60,11 @@ TEXTS = {
         "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
     "offer_short": {
+        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'> Ǵalabalıq oferta</a> hám <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
         "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
+        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта</a> және <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a> шарттарымен келісесіз.",
         "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с условиями <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Публичной оферты</a> и <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Политики конфиденциальности</a>.",
         "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Public Offer</a> and <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Privacy Policy</a>.",
-        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> hám <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
-        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта</a> және <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a> шарттарымен келісесіз."
     },
     "menu": {
         "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
@@ -80,11 +80,11 @@ TEXTS = {
         "uz": "✅ To'lov qabul qilindi!\n\n📂 <b>Iltimos, sifat buzilmasligi uchun rasmni FAYL (Document) ko'rinishida yuboring:</b>",
         "ru": "✅ Оплата принята!\n\n📂 <b>Пожалуйста, отправьте фото как ФАЙЛ (Документ), чтобы не потерять качество:</b>",
         "en": "✅ Payment accepted!\n\n📂 <b>Please send the photo as a FILE (Document) to preserve quality:</b>",
-        "qq": "✅ Tólem qabıl etildi!\n\n📂 <b>Sapa buzılmawı ushın súwretti ilaji barınsha FAYL (Document) retinde jiberiń:</b>",
+        "qq": "✅ Tólem qabıl etildi!\n\n📂 <b>Sapa buzılmawı ushın súwretti iláji barınsha FAYL (Document) retinde jiberiń:</b>",
         "kk": "✅ Төлем қабылданды!\n\n📂 <b>Сапасы бұзылмас үшін суретті ФАЙЛ (Құжат) ретінде жіберіңіз:</b>"
     },
     "send_comment": {
-        "uz": "📝 Izoh yozing (nima qilish kerak?):", "ru": "📝 Напишите комментарий (что нужно сделать?):", "en": "📝 Write a comment:", "qq": "📝 Izoh jazıń (ne qılıw kerek?):", "kk": "📝 Пікір жазыңыз:"
+        "uz": "📝 Izoh yozing (nima qilish kerak?):", "ru": "📝 Напишите комментарий (что нужно сделать?):", "en": "📝 Write a comment:", "qq": "📝 Túsindirme jazıń (ne qılıw kerek?):", "kk": "📝 Пікір жазыңыз:"
     },
     "send_phone": {
         "uz": "📞 Telefon raqamingizni yuboring:", "ru": "📞 Отправьте номер телефона:", "en": "📞 Send your phone number:", "qq": "📞 Telefon nomerińizdi jiberiń:", "kk": "📞 Телефон нөміріңізді жіберіңіз:"
@@ -93,7 +93,7 @@ TEXTS = {
         "uz": "⏳ Buyurtma qabul qilindi! Tez orada aloqaga chiqamiz.", "ru": "⏳ Заказ принят! Скоро свяжемся.", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi! Tez arada baylanısqa shıǵamız.", "kk": "⏳ Тапсырыс қабылданды!"
     },
     "video_btn": { "uz": "🎬 Video Qo'llanma", "ru": "🎬 Видео инструкция", "en": "🎬 Video Tutorial", "qq": "🎬 Video Qollanba", "kk": "🎬 Видео Нұсқаулық" },
-    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járden", "kk": "👨‍💻 Әкімші / Қолдау" },
+    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járdem", "kk": "👨‍💻 Әкімші / Қолдау" },
     "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." },
     
     # Statuslar
@@ -103,7 +103,7 @@ TEXTS = {
 }
 
 SERVICES_CONFIG = {
-    "restore": { "price": 100000, "names": { "uz": "📷 Foto restavratsiya (1k)", "ru": "📷 Реставрация фото (1k)", "en": "📷 Photo restoration", "qq": "📷 Foto restavratsiya", "kk": "📷 Фото реставрация" } },
+    "restore": { "price": 100000, "names": { "uz": "📷 Foto restavratsiya (1k)", "ru": "📷 Реставрация фото (1k)", "en": "📷 Photo restoration", "qq": "📷 Foto restavraciya", "kk": "📷 Фото реставрация" } },
     "4k": { "price": 3000000, "names": { "uz": "🖼 4K / 8K qilish (30k)", "ru": "🖼 4K / 8K (30k)", "en": "🖼 4K / 8K upscale", "qq": "🖼 4K / 8K sapası", "kk": "🖼 4K / 8K жасау" } },
     "video": { "price": 8000000, "names": { "uz": "🎞 Video montaj (80k)", "ru": "🎞 Видео монтаж (80k)", "en": "🎞 Video editing", "qq": "🎞 Video montaj", "kk": "🎞 Видео монтаж" } }
 }
@@ -125,9 +125,9 @@ def menu_kb(lang):
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏳ Qabul", callback_data=f"s:{order_id}:accepted_st")],
-        [InlineKeyboardButton(text="⚙️ Ishlanmoqda", callback_data=f"s:{order_id}:working_st")],
-        [InlineKeyboardButton(text="✅ Tayyor", callback_data=f"s:{order_id}:done_st")]
+        [InlineKeyboardButton(text="⏳ Qabıl etildi", callback_data=f"s:{order_id}:accepted_st")],
+        [InlineKeyboardButton(text="⚙️ Islenbekte", callback_data=f"s:{order_id}:working_st")],
+        [InlineKeyboardButton(text="✅ Tayın", callback_data=f"s:{order_id}:done_st")]
     ])
 
 # ================= FSM =================
@@ -248,7 +248,7 @@ async def finish(m: Message, state: FSMContext):
 
     file_status = "🖼 Rasm (Siquvda)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
     caption = (
-        f"🆕 BUYURTMA #{order_id}\n"
+        f"🆕 Zakaz #{order_id}\n"
         f"💰 {int(amount)} UZS (Click)\n"
         f"👤 {m.from_user.full_name}\n"
         f"🛠 {service_name}\n"
@@ -286,7 +286,7 @@ async def admin_send_result(m: Message):
                 break
         
         if not order_id.isdigit():
-            await m.reply("⚠️ Buyurtma raqami topilmadi. Masalan: `#15` deb yozing.")
+            await m.reply("⚠️ Buyırtpa nomeri tabılmadı. Mısalı: `#15` deǵ jazıń.")
             return
 
         cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
@@ -299,12 +299,12 @@ async def admin_send_result(m: Message):
             db.commit()
             
             # --- XATOLIK SABABI: REACT OLIB TASHLANDI ---
-            await m.reply(f"✅ Fayl mijozga yetkazildi! (ID: {user_id})")
+            await m.reply(f"✅ Fayl klientke jetkizildi! (ID: {user_id})")
         else:
-            await m.reply(f"⚠️ #{order_id} raqamli buyurtma topilmadi.")
+            await m.reply(f"⚠️ #{order_id} nomerli buyırtpa tabılmadı.")
 
     except Exception as e:
-        await m.reply(f"Xatolik: {e}")
+        await m.reply(f"Qátelik: {e}")
 
 # ================= STATUS STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
@@ -349,3 +349,4 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
