@@ -140,14 +140,19 @@ class Order(StatesGroup):
 # ================= START =================
 @dp.message(CommandStart())
 async def start(m: Message):
-    # --- O'ZGARTIRILDI: Bayroqsiz va yangi tartib ---
-    # Tartib: QQ -> UZ -> KK -> RU -> EN
+    # Tugmalar 2 ta ustun (yonma-yon) bo'lib chiqadi
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Qaraqalpaqsha", callback_data="lang_qq")],
-        [InlineKeyboardButton(text="O'zbekcha", callback_data="lang_uz")],
-        [InlineKeyboardButton(text="Qazaqsha", callback_data="lang_kk")],
-        [InlineKeyboardButton(text="Русский", callback_data="lang_ru")],
-        [InlineKeyboardButton(text="English", callback_data="lang_en")]
+        [
+            InlineKeyboardButton(text="Qaraqalpaqsha", callback_data="lang_qq"),
+            InlineKeyboardButton(text="O'zbekcha", callback_data="lang_uz")
+        ],
+        [
+            InlineKeyboardButton(text="Qazaqsha", callback_data="lang_kk"),
+            InlineKeyboardButton(text="Русский", callback_data="lang_ru")
+        ],
+        [
+            InlineKeyboardButton(text="English", callback_data="lang_en")
+        ]
     ])
     await m.answer(TEXTS["choose_lang"]["uz"], reply_markup=kb)
 
@@ -354,5 +359,6 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
 
