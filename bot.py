@@ -57,14 +57,14 @@ db.commit()
 # ================= TARJIMALAR =================
 TEXTS = {
     "choose_lang": {
-        "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
+        "uz": "🌐 Tildi tańlań", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
     "offer_short": {
-        "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
-        "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с условиями <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Публичной оферты</a> и <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Политики конфиденциальности</a>.",
-        "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Public Offer</a> and <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Privacy Policy</a>.",
-        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Ommaviy oferta</a> hám <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
-        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1UR_EzfBfMsqc_hDMuRLtzKFcvVSVC95K7Eb_Wx_4HrI/edit?usp=sharing'>Оферта</a> және <a href='https://docs.google.com/document/d/18ejaQJ_TUW1781JB3ii7RSe8--i_DCUM/edit?usp=sharing'>Құпиялылық саясаты</a> шарттарымен келісесіз."
+        "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
+        "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с условиями <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Публичной оферты</a> и <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Политики конфиденциальности</a>.",
+        "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Public Offer</a> and <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Privacy Policy</a>.",
+        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Ǵalabalıq oferta</a> hám <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
+        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Оферта</a> және <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Құпиялылық саясаты</a> шарттарымен келісесіз."
     },
     "menu": {
         "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
@@ -98,7 +98,7 @@ TEXTS = {
     
     # Statuslar
     "accepted_st": { "uz": "⏳ Qabul", "ru": "⏳ Принят", "en": "⏳ Accepted", "qq": "⏳ Qabıllandı", "kk": "⏳ Қабылданды" },
-    "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
+    "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenbekte", "kk": "⚙️ Орындалуда" },
     "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayın", "kk": "✅ Дайын" }
 }
 
@@ -354,4 +354,5 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
 
