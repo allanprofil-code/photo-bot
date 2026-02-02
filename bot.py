@@ -6,7 +6,7 @@ from aiogram.types import (
     Message, CallbackQuery,
     InlineKeyboardMarkup, InlineKeyboardButton,
     ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove,
-    Update, LabeledPrice, PreCheckoutQuery
+    Update
 )
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import StatesGroup, State
@@ -14,7 +14,6 @@ from aiogram.fsm.context import FSMContext
 
 # ================= ENV (SOZLAMALAR) =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-CLICK_TOKEN = os.getenv("CLICK_TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
 CHANNEL_ID = os.getenv("CHANNEL_ID") 
 SUPPORT_LINK = os.getenv("SUPPORT_LINK") 
@@ -44,8 +43,6 @@ CREATE TABLE IF NOT EXISTS orders(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     service TEXT,
-    amount INTEGER,
-    provider TEXT,
     comment TEXT,
     phone TEXT,
     status TEXT,
@@ -57,55 +54,61 @@ db.commit()
 # ================= TARJIMALAR =================
 TEXTS = {
     "choose_lang": {
-        "uz": "🌐 Tildi tańlań", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
+        "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
     "offer_short": {
-        "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Ommaviy oferta</a> va <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Maxfiylik siyosati</a> shartlariga rozilik bildirasiz.",
-        "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с условиями <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Публичной оферты</a> и <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Политики конфиденциальности</a>.",
-        "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Public Offer</a> and <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Privacy Policy</a>.",
-        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Ǵalabalıq oferta</a> hám <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Qupıyalılıq siyasatı</a> shártlerine razılıq bildiresiz.",
-        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз <a href='https://docs.google.com/document/d/1NQQFlQpk78W65WkqHnZMe2aVST2ZsFTiIvxtnT_ne0Y/edit?tab=t.0'>Оферта</a> және <a href='https://docs.google.com/document/d/1rgbpK1czRAttDefFjyhVGM48Ni8hQStbVr6EyZ-mAtM/edit?tab=t.0'>Құпиялылық саясаты</a> шарттарымен келісесіз."
+        "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz qoidalarimizga rozilik bildirasiz.",
+        "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с нашими правилами.",
+        "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to our terms.",
+        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz qaǵıydalarımızǵa razılıq bildiresiz.",
+        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз ережелерімізбен келісесіз."
     },
     "menu": {
         "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
     },
-    "invoice_title": {
-        "uz": "To'lov", "ru": "Оплата", "en": "Payment", "qq": "Tólem", "kk": "Төлем"
-    },
-    "invoice_desc": {
-        "uz": "Xizmat uchun to'lovni amalga oshiring",
-        "ru": "Пожалуйста, оплатите услугу", "en": "Please pay for the service", "qq": "Xızmet ushın tólemdi ámelge asırıń", "kk": "Қызмет үшін төлем жасаңыз"
-    },
-    "after_pay": {
-        "uz": "✅ To'lov qabul qilindi!\n\n📂 <b>Iltimos, sifat buzilmasligi uchun rasmni FAYL (Document) ko'rinishida yuboring:</b>",
-        "ru": "✅ Оплата принята!\n\n📂 <b>Пожалуйста, отправьте фото как ФАЙЛ (Документ), чтобы не потерять качество:</b>",
-        "en": "✅ Payment accepted!\n\n📂 <b>Please send the photo as a FILE (Document) to preserve quality:</b>",
-        "qq": "✅ Tólem qabıl etildi!\n\n📂 <b>Sapa buzılmawı ushın súwretti iláji barınsha FAYL (Document) retinde jiberiń:</b>",
-        "kk": "✅ Төлем қабылданды!\n\n📂 <b>Сапасы бұзылмас үшін суретті ФАЙЛ (Құжат) ретінде жіберіңіз:</b>"
+    # --- TO'LOV O'RNIGA FAYL SO'RASH ---
+    "send_file_req": {
+        "uz": "✅ Xizmat tanlandi.\n\n📂 <b>Iltimos, ishlov berilishi kerak bo'lgan rasmni yoki faylni yuboring:</b>",
+        "ru": "✅ Услуга выбрана.\n\n📂 <b>Пожалуйста, отправьте фото или файл для обработки:</b>",
+        "en": "✅ Service selected.\n\n📂 <b>Please send the photo or file to be processed:</b>",
+        "qq": "✅ Xızmet tańlandı.\n\n📂 <b>Iltimos, islew beriliwi kerek bolǵan súwretti yaki fayldı jiberiń:</b>",
+        "kk": "✅ Қызмет таңдалды.\n\n📂 <b>Өңделуі керек суретті немесе файлды жіберіңіз:</b>"
     },
     "send_comment": {
-        "uz": "📝 Izoh yozing (nima qilish kerak?):", "ru": "📝 Напишите комментарий (что нужно сделать?):", "en": "📝 Write a comment:", "qq": "📝 Túsindirme jazıń (ne qılıw kerek?):", "kk": "📝 Пікір жазыңыз:"
+        "uz": "📝 Rasm bo'yicha izoh yozing (nima qilish kerak?):", 
+        "ru": "📝 Напишите комментарий к фото (что нужно сделать?):", 
+        "en": "📝 Write a comment (what needs to be done?):", 
+        "qq": "📝 Súwret boyınsha izoh jazıń (ne qılıw kerek?):", 
+        "kk": "📝 Сурет бойынша пікір жазыңыз:"
     },
     "send_phone": {
-        "uz": "📞 Telefon raqamingizni yuboring:", "ru": "📞 Отправьте номер телефона:", "en": "📞 Send your phone number:", "qq": "📞 Telefon nomerińizdi jiberiń:", "kk": "📞 Телефон нөміріңізді жіберіңіз:"
+        "uz": "📞 Siz bilan bog'lanishimiz uchun telefon raqamingizni yuboring:", 
+        "ru": "📞 Отправьте номер телефона для связи:", 
+        "en": "📞 Send your phone number so we can contact you:", 
+        "qq": "📞 Siz benen baylanısıwımız ushın telefon nomerińizdi jiberiń:", 
+        "kk": "📞 Сізбен хабарласуымыз үшін телефон нөміріңізді жіберіңіз:"
     },
     "accepted": {
-        "uz": "⏳ Buyurtma qabul qilindi! Tez orada aloqaga chiqamiz.", "ru": "⏳ Заказ принят! Скоро свяжемся.", "en": "⏳ Order accepted!", "qq": "⏳ Buyırtpa qabıl etildi! Tez arada baylanısqa shıǵamız.", "kk": "⏳ Тапсырыс қабылданды!"
+        "uz": "✅ <b>Buyurtmangiz qabul qilindi!</b>\n\nTez orada operatorimiz siz bilan bog'lanib, narx va muddatni kelishib oladi.", 
+        "ru": "✅ <b>Ваш заказ принят!</b>\n\nНаш оператор скоро свяжется с вами для согласования цены и сроков.", 
+        "en": "✅ <b>Order accepted!</b>\n\nOur operator will contact you shortly to agree on price and deadline.", 
+        "qq": "✅ <b>Buyırtpańız qabıl etildi!</b>\n\nTez arada operatorımız siz benen baylanısıp, baha hám múddetti kelisip aladı.", 
+        "kk": "✅ <b>Тапсырысыңыз қабылданды!</b>\n\nЖақында операторымыз сізбен хабарласып, баға мен мерзімді келіседі."
     },
     "video_btn": { "uz": "🎬 Video Qo'llanma", "ru": "🎬 Видео инструкция", "en": "🎬 Video Tutorial", "qq": "🎬 Video Qollanba", "kk": "🎬 Видео Нұсқаулық" },
-    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járdem", "kk": "👨‍💻 Әкімші / Қолдау" },
+    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járden", "kk": "👨‍💻 Әкімші / Қолдау" },
     "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." },
     
     # Statuslar
     "accepted_st": { "uz": "⏳ Qabul", "ru": "⏳ Принят", "en": "⏳ Accepted", "qq": "⏳ Qabıllandı", "kk": "⏳ Қабылданды" },
-    "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenbekte", "kk": "⚙️ Орындалуда" },
-    "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayın", "kk": "✅ Дайын" }
+    "working_st": { "uz": "⚙️ Ishlanmoqda", "ru": "⚙️ В работе", "en": "⚙️ Working", "qq": "⚙️ Islenip atır", "kk": "⚙️ Орындалуда" },
+    "done_st": { "uz": "✅ Tayyor", "ru": "✅ Готово", "en": "✅ Done", "qq": "✅ Tayyar", "kk": "✅ Дайын" }
 }
 
 SERVICES_CONFIG = {
-    "restore": { "price": 100000, "names": { "uz": "📷 Foto restavratsiya (1k)", "ru": "📷 Реставрация фото (1k)", "en": "📷 Photo restoration", "qq": "📷 Foto restavraciya", "kk": "📷 Фото реставрация" } },
-    "4k": { "price": 3000000, "names": { "uz": "🖼 4K / 8K qilish (30k)", "ru": "🖼 4K / 8K (30k)", "en": "🖼 4K / 8K upscale", "qq": "🖼 4K / 8K sapası", "kk": "🖼 4K / 8K жасау" } },
-    "video": { "price": 8000000, "names": { "uz": "🎞 Video montaj (80k)", "ru": "🎞 Видео монтаж (80k)", "en": "🎞 Video editing", "qq": "🎞 Video montaj", "kk": "🎞 Видео монтаж" } }
+    "restore": { "names": { "uz": "📷 Foto restavratsiya", "ru": "📷 Реставрация фото", "en": "📷 Photo restoration", "qq": "📷 Foto restavratsiya", "kk": "📷 Фото реставрация" } },
+    "4k": { "names": { "uz": "🖼 4K / 8K qilish", "ru": "🖼 4K / 8K", "en": "🖼 4K / 8K upscale", "qq": "🖼 4K / 8K sapası", "kk": "🖼 4K / 8K жасау" } },
+    "video": { "names": { "uz": "🎞 Video montaj", "ru": "🎞 Видео монтаж", "en": "🎞 Video editing", "qq": "🎞 Video montaj", "kk": "🎞 Видео монтаж" } }
 }
 
 # ================= HELPERS =================
@@ -125,14 +128,12 @@ def menu_kb(lang):
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏳ Qabıllandı", callback_data=f"s:{order_id}:accepted_st")],
-        [InlineKeyboardButton(text="⚙️ Islenbekte", callback_data=f"s:{order_id}:working_st")],
-        [InlineKeyboardButton(text="✅ Tayın", callback_data=f"s:{order_id}:done_st")]
+        [InlineKeyboardButton(text="⚙️ Ishlanmoqda", callback_data=f"s:{order_id}:working_st")],
+        [InlineKeyboardButton(text="✅ Tayyor", callback_data=f"s:{order_id}:done_st")]
     ])
 
 # ================= FSM =================
 class Order(StatesGroup):
-    waiting_payment = State()
     file = State()
     comment = State()
     phone = State()
@@ -140,7 +141,6 @@ class Order(StatesGroup):
 # ================= START =================
 @dp.message(CommandStart())
 async def start(m: Message):
-    # Tugmalar 2 ta ustun (yonma-yon) bo'lib chiqadi
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="Qaraqalpaqsha", callback_data="lang_qq"),
@@ -181,90 +181,68 @@ async def extra_buttons(m: Message):
         kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=TEXTS["admin_btn"][lang], url=link)]])
         await m.answer(TEXTS["admin_btn"][lang], reply_markup=kb)
 
-# ================= 1. XIZMAT TANLASH =================
+# ================= 1. XIZMAT TANLASH VA FAYL SO'RASH =================
 @dp.message(lambda m: any(m.text in conf["names"].values() for conf in SERVICES_CONFIG.values()))
 async def select_service(m: Message, state: FSMContext):
-    if not CLICK_TOKEN:
-        await m.answer("⚠️ Click token jalǵanbaǵan.")
-        return
-
     lang = get_lang(m.from_user.id)
     selected_service = next((k for k, v in SERVICES_CONFIG.items() if v["names"][lang] == m.text), None)
     
     if not selected_service:
         return
 
-    price = SERVICES_CONFIG[selected_service]["price"]
-    label = SERVICES_CONFIG[selected_service]["names"][lang]
-    
-    await state.update_data(service=selected_service, price=price)
+    # Narxni olib tashladik, faqat xizmat nomini saqlaymiz
+    await state.update_data(service=selected_service)
 
-    # To'g'ridan-to'g'ri Invoice yuborish (Tezlashtirilgan)
-    try:
-        await bot.send_invoice(
-            chat_id=m.chat.id,
-            title=TEXTS["invoice_title"][lang],
-            description=f"{TEXTS['invoice_desc'][lang]}: {label}",
-            payload=f"pay_{selected_service}",
-            provider_token=CLICK_TOKEN,
-            currency="UZS",
-            prices=[LabeledPrice(label=label, amount=price)],
-            start_parameter="pay",
-            is_flexible=False  
-        )
-        await state.set_state(Order.waiting_payment)
-    except Exception as e:
-        await m.answer(f"Xatolik: {e}")
-
-# ================= 2. PAYMENTS =================
-@dp.pre_checkout_query()
-async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery):
-    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
-
-@dp.message(F.successful_payment)
-async def successful_payment_handler(m: Message, state: FSMContext):
-    lang = get_lang(m.from_user.id)
-    await m.answer(TEXTS["after_pay"][lang], parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
+    # To'lov o'rniga darhol fayl so'raymiz
+    await m.answer(TEXTS["send_file_req"][lang], parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
     await state.set_state(Order.file)
 
-# ================= 3. FAYL & FINISH =================
+# ================= 2. FAYL OLISH =================
 @dp.message(Order.file, F.photo | F.document)
 async def get_file(m: Message, state: FSMContext):
     file_id = m.photo[-1].file_id if m.photo else m.document.file_id
     file_type = "photo" if m.photo else "document"
     await state.update_data(file_id=file_id, file_type=file_type)
+    
+    # Izoh so'raymiz
     await state.set_state(Order.comment)
     await m.answer(TEXTS["send_comment"][get_lang(m.from_user.id)])
 
+# ================= 3. IZOH OLISH =================
 @dp.message(Order.comment)
 async def get_comment(m: Message, state: FSMContext):
     await state.update_data(comment=m.text)
+    
+    # Telefon raqam so'raymiz
     await state.set_state(Order.phone)
     await m.answer(TEXTS["send_phone"][get_lang(m.from_user.id)],
                    reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="📞", request_contact=True)]], resize_keyboard=True))
 
+# ================= 4. TELEFON VA YAKUNLASH =================
 @dp.message(Order.phone, F.contact)
 async def finish(m: Message, state: FSMContext):
     data = await state.get_data()
     lang = get_lang(m.from_user.id)
     phone = m.contact.phone_number
-    amount = data['price'] / 100
     service_name = SERVICES_CONFIG[data["service"]]["names"][lang]
 
-    cur.execute("INSERT INTO orders(user_id, service, amount, provider, comment, phone, status, file_id) VALUES(?,?,?,?,?,?,?,?)",
-                (m.from_user.id, service_name, amount, "Click", data["comment"], phone, "paid_accepted", data["file_id"]))
+    # Bazaga yozish (status = 'new' yoki 'waiting')
+    cur.execute("INSERT INTO orders(user_id, service, comment, phone, status, file_id) VALUES(?,?,?,?,?,?)",
+                (m.from_user.id, service_name, data["comment"], phone, "new", data["file_id"]))
     db.commit()
     order_id = cur.lastrowid
 
     file_status = "🖼 Rasm (Siquvda)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
+    
+    # Adminga/Kanalga boradigan xabar
     caption = (
-        f"🆕 BUYÍRTPA #{order_id}\n"
-        f"💰 {int(amount)} UZS (Click)\n"
-        f"👤 {m.from_user.full_name}\n"
-        f"🛠 {service_name}\n"
-        f"📦 {file_status}\n"
-        f"📝 {data['comment']}\n"
-        f"📞 {phone}"
+        f"🆕 <b>YANGI BUYURTMA #{order_id}</b>\n"
+        f"👤 <b>Mijoz:</b> <a href='tg://user?id={m.from_user.id}'>{m.from_user.full_name}</a>\n"
+        f"🛠 <b>Xizmat:</b> {service_name}\n"
+        f"📦 <b>Fayl:</b> {file_status}\n"
+        f"📝 <b>Izoh:</b> {data['comment']}\n"
+        f"📞 <b>Tel:</b> {phone}\n"
+        f"⚠️ <b>Holat:</b> To'lov qilinmagan (Kelishish kerak)"
     )
     
     try:
@@ -272,19 +250,19 @@ async def finish(m: Message, state: FSMContext):
         dest_id = int(dest_id)
         
         if data['file_type'] == "photo":
-            await bot.send_photo(dest_id, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
+            await bot.send_photo(dest_id, data['file_id'], caption=caption, parse_mode="HTML", reply_markup=admin_kb(order_id))
         else:
-            await bot.send_document(dest_id, data['file_id'], caption=caption, reply_markup=admin_kb(order_id))
+            await bot.send_document(dest_id, data['file_id'], caption=caption, parse_mode="HTML", reply_markup=admin_kb(order_id))
     except Exception as e:
         print(f"Send error: {e}")
 
-    await m.answer(TEXTS["accepted"][lang], reply_markup=menu_kb(lang))
+    # Mijozga xabar: "Qabul qilindi, aloqaga chiqamiz"
+    await m.answer(TEXTS["accepted"][lang], parse_mode="HTML", reply_markup=menu_kb(lang))
     await state.clear()
 
-# ================= 4. ADMIN JAVOB YUBORISH (Kanal yoki Bot) =================
+# ================= 5. ADMIN JAVOB YUBORISH (Kanal yoki Bot) =================
 @dp.message(F.caption.contains("#") | F.text.contains("#"))
 async def admin_send_result(m: Message):
-    # Faqat admin javob bera oladi
     if str(m.from_user.id) != str(ADMIN_ID):
         return
 
@@ -297,7 +275,6 @@ async def admin_send_result(m: Message):
                 break
         
         if not order_id.isdigit():
-            # Agar raqam topilmasa, shunchaki e'tiborsiz qoldiradi (xato bermaydi)
             return
 
         cur.execute("SELECT user_id FROM orders WHERE id=?", (order_id,))
@@ -309,14 +286,14 @@ async def admin_send_result(m: Message):
             cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
             db.commit()
             
-            await m.reply(f"✅ Fayl klientke jetkizildi! (ID: {user_id})")
+            await m.reply(f"✅ Fayl mijozga yetkazildi! (ID: {user_id})")
         else:
             await m.reply(f"⚠️ #{order_id} raqamli buyurtma topilmadi.")
 
     except Exception as e:
         await m.reply(f"Xatolik: {e}")
 
-# ================= STATUS STATUS =================
+# ================= STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
 async def status(c: CallbackQuery):
     _, oid, st_key = c.data.split(":") 
@@ -359,6 +336,3 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
-
-
-
