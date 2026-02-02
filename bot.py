@@ -54,31 +54,35 @@ db.commit()
 # ================= TARJIMALAR =================
 TEXTS = {
     "choose_lang": {
-        "uz": "🌐 Tilni tanlang", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
+        "uz": "🌐 Tildi tańlań", "ru": "🌐 Выберите язык", "en": "🌐 Choose language", "qq": "🌐 Tildi tańlań", "kk": "🌐 Тілді таңдаңыз"
     },
+    # --- YANGILANGAN: LINKLARSIZ ODDIIY MATN ---
     "offer_short": {
-        "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz qoidalarimizga rozilik bildirasiz.",
-        "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы соглашаетесь с нашими правилами.",
-        "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to our terms.",
-        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz qaǵıydalarımızǵa razılıq bildiresiz.",
-        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз ережелерімізбен келісесіз."
+        "uz": "✅ <b>Til tanlandi!</b>\n\nBotdan foydalanish orqali siz shaxsiy ma'lumotlaringiz (telefon, rasm) qayta ishlanishiga rozilik bildirasiz.",
+        
+        "ru": "✅ <b>Язык выбран!</b>\n\nИспользуя бот, вы даете согласие на обработку ваших персональных данных (телефон, фото).",
+        
+        "en": "✅ <b>Language selected!</b>\n\nBy using the bot, you agree to the processing of your personal data (phone, photo).",
+        
+        "qq": "✅ <b>Til tańlandı!</b>\n\nBottan paydalanıw arqalı siz jeke maǵlıwmatlarıńız (telefon, súwret) qayta isleniwine razılıq bildiresiz.",
+        
+        "kk": "✅ <b>Тіл таңдалды!</b>\n\nБотты пайдалану арқылы сіз дербес деректеріңіздің (телефон, сурет) өңделуіне келісім бересіз."
     },
     "menu": {
         "uz": "📸 Xizmatni tanlang:", "ru": "📸 Выберите услугу:", "en": "📸 Select service:", "qq": "📸 Xızmetti tańlań:", "kk": "📸 Қызметті таңдаңыз:"
     },
-    # --- TO'LOV O'RNIGA FAYL SO'RASH ---
     "send_file_req": {
         "uz": "✅ Xizmat tanlandi.\n\n📂 <b>Iltimos, ishlov berilishi kerak bo'lgan rasmni yoki faylni yuboring:</b>",
         "ru": "✅ Услуга выбрана.\n\n📂 <b>Пожалуйста, отправьте фото или файл для обработки:</b>",
         "en": "✅ Service selected.\n\n📂 <b>Please send the photo or file to be processed:</b>",
-        "qq": "✅ Xızmet tańlandı.\n\n📂 <b>Iltimos, islew beriliwi kerek bolǵan súwretti yaki fayldı jiberiń:</b>",
+        "qq": "✅ Xızmet tańlandı.\n\n📂 <b>Isleniwi kerek bolǵan súwretti yaki fayldı jiberiń:</b>",
         "kk": "✅ Қызмет таңдалды.\n\n📂 <b>Өңделуі керек суретті немесе файлды жіберіңіз:</b>"
     },
     "send_comment": {
         "uz": "📝 Rasm bo'yicha izoh yozing (nima qilish kerak?):", 
         "ru": "📝 Напишите комментарий к фото (что нужно сделать?):", 
         "en": "📝 Write a comment (what needs to be done?):", 
-        "qq": "📝 Súwret boyınsha izoh jazıń (ne qılıw kerek?):", 
+        "qq": "📝 Súwret boyınsha túsindirme jazıń (ne qılıw kerek?):", 
         "kk": "📝 Сурет бойынша пікір жазыңыз:"
     },
     "send_phone": {
@@ -92,11 +96,11 @@ TEXTS = {
         "uz": "✅ <b>Buyurtmangiz qabul qilindi!</b>\n\nTez orada operatorimiz siz bilan bog'lanib, narx va muddatni kelishib oladi.", 
         "ru": "✅ <b>Ваш заказ принят!</b>\n\nНаш оператор скоро свяжется с вами для согласования цены и сроков.", 
         "en": "✅ <b>Order accepted!</b>\n\nOur operator will contact you shortly to agree on price and deadline.", 
-        "qq": "✅ <b>Buyırtpańız qabıl etildi!</b>\n\nTez arada operatorımız siz benen baylanısıp, baha hám múddetti kelisip aladı.", 
+        "qq": "✅ <b>Buyırtpańız qabıl etildi!</b>\n\nTez arada operatorımız Siz benen baylanısıp, baha hám múddetti kelisip aladı.", 
         "kk": "✅ <b>Тапсырысыңыз қабылданды!</b>\n\nЖақында операторымыз сізбен хабарласып, баға мен мерзімді келіседі."
     },
     "video_btn": { "uz": "🎬 Video Qo'llanma", "ru": "🎬 Видео инструкция", "en": "🎬 Video Tutorial", "qq": "🎬 Video Qollanba", "kk": "🎬 Видео Нұсқаулық" },
-    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járden", "kk": "👨‍💻 Әкімші / Қолдау" },
+    "admin_btn": { "uz": "👨‍💻 Admin / Support", "ru": "👨‍💻 Админ / Поддержка", "en": "👨‍💻 Admin / Support", "qq": "👨‍💻 Admin / Járdem", "kk": "👨‍💻 Әкімші / Қолдау" },
     "no_video": { "uz": "⚠️ Video hali yuklanmagan.", "ru": "⚠️ Видео еще не загружено.", "en": "⚠️ Video not uploaded yet.", "qq": "⚠️ Video ele júklenbegen.", "kk": "⚠️ Видео әлі жүктелмеген." },
     
     # Statuslar
@@ -106,7 +110,7 @@ TEXTS = {
 }
 
 SERVICES_CONFIG = {
-    "restore": { "names": { "uz": "📷 Foto restavratsiya", "ru": "📷 Реставрация фото", "en": "📷 Photo restoration", "qq": "📷 Foto restavratsiya", "kk": "📷 Фото реставрация" } },
+    "restore": { "names": { "uz": "📷 Foto restavratsiya", "ru": "📷 Реставрация фото", "en": "📷 Photo restoration", "qq": "📷 Foto restavraciya", "kk": "📷 Фото реставрация" } },
     "4k": { "names": { "uz": "🖼 4K / 8K qilish", "ru": "🖼 4K / 8K", "en": "🖼 4K / 8K upscale", "qq": "🖼 4K / 8K sapası", "kk": "🖼 4K / 8K жасау" } },
     "video": { "names": { "uz": "🎞 Video montaj", "ru": "🎞 Видео монтаж", "en": "🎞 Video editing", "qq": "🎞 Video montaj", "kk": "🎞 Видео монтаж" } }
 }
@@ -128,8 +132,8 @@ def menu_kb(lang):
 
 def admin_kb(order_id):
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⚙️ Ishlanmoqda", callback_data=f"s:{order_id}:working_st")],
-        [InlineKeyboardButton(text="✅ Tayyor", callback_data=f"s:{order_id}:done_st")]
+        [InlineKeyboardButton(text="⚙️ Islenbekte", callback_data=f"s:{order_id}:working_st")],
+        [InlineKeyboardButton(text="✅ Tayın", callback_data=f"s:{order_id}:done_st")]
     ])
 
 # ================= FSM =================
@@ -232,17 +236,17 @@ async def finish(m: Message, state: FSMContext):
     db.commit()
     order_id = cur.lastrowid
 
-    file_status = "🖼 Rasm (Siquvda)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
+    file_status = "🖼 Súwret (Isleniwde)" if data['file_type'] == "photo" else "📂 Fayl (Original)"
     
     # Adminga/Kanalga boradigan xabar
     caption = (
-        f"🆕 <b>YANGI BUYURTMA #{order_id}</b>\n"
-        f"👤 <b>Mijoz:</b> <a href='tg://user?id={m.from_user.id}'>{m.from_user.full_name}</a>\n"
-        f"🛠 <b>Xizmat:</b> {service_name}\n"
+        f"🆕 <b>Jańa buyırtpa #{order_id}</b>\n"
+        f"👤 <b>Klient:</b> <a href='tg://user?id={m.from_user.id}'>{m.from_user.full_name}</a>\n"
+        f"🛠 <b>Xızmet:</b> {service_name}\n"
         f"📦 <b>Fayl:</b> {file_status}\n"
-        f"📝 <b>Izoh:</b> {data['comment']}\n"
+        f"📝 <b>Túsindirme:</b> {data['comment']}\n"
         f"📞 <b>Tel:</b> {phone}\n"
-        f"⚠️ <b>Holat:</b> To'lov qilinmagan (Kelishish kerak)"
+        f"⚠️ <b>Jaǵday:</b> Tólem qılınbaǵan (Kelisiw kerek)"
     )
     
     try:
@@ -286,12 +290,12 @@ async def admin_send_result(m: Message):
             cur.execute("UPDATE orders SET status='done_st' WHERE id=?", (order_id,))
             db.commit()
             
-            await m.reply(f"✅ Fayl mijozga yetkazildi! (ID: {user_id})")
+            await m.reply(f"✅ Fayl klientke jetkizildi! (ID: {user_id})")
         else:
-            await m.reply(f"⚠️ #{order_id} raqamli buyurtma topilmadi.")
+            await m.reply(f"⚠️ #{order_id} sanlı buyırtpa tabılmadı.")
 
     except Exception as e:
-        await m.reply(f"Xatolik: {e}")
+        await m.reply(f"Qátelik: {e}")
 
 # ================= STATUS =================
 @dp.callback_query(F.data.startswith("s:"))
@@ -336,3 +340,4 @@ app.on_shutdown.append(on_shutdown)
 
 if __name__ == "__main__":
     web.run_app(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
